@@ -9,40 +9,63 @@
 # + Last updated: 05/27/2015
 # + Level: Easy, Normal
 # + Requires: n/a
-# -----------------------------------------------------------------------------
-# + Information:
-#   By default, this script will support a pretty standard format of bitmap
-#   fonts, where you require a .fnt file that is structured in a certain way,
-#   and a graphic file in any format Ace supports.
-#
-# + Important:
-#   Bitmap fonts will ignore text codes that attempt to change their color,
-#   size, outline, shadow, and other properties: if you need these features,
-#   you should use regular fonts for these areas. Bitmap fonts provide great
-#   flexibility in decorations and pixel perfect rendering, but they are not
-#   a replacement for standard font files, but are rather an alternative with
-#   their own pros and cons.
-#
-# + Recommendations for tools:
-#   The following website has a great tool for generating bitmap font files:
-#     http://kvazars.com/littera/
-#   It is free to use. Make sure that you select "XML (.fnt)" in the "Format"
-#   dropdown menu, and that you give it the name you want for the font in the
-#   "Name" box.
-#
-# + General tips:
-#   
-# -----------------------------------------------------------------------------
-# + License:  Free for non-commercial and commercial use. Please credit
-#             Tor Damian Design. You are free to share script freely with
-#             everyone, but please retain this description and license.
-#             Thank you.
 # _____________________________________________________________________________
 #
-# + Changelog:
-#
+# ▼ Changelog
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
 # 0.0.5   Core functionality of rendering bitmap fonts based on the standardized 
 #         bitmap font format implemented.
+#
+#==============================================================================
+# ▼ Information
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# By default, this script will support a pretty standard format of bitmap
+# fonts, where you require a .fnt file that is structured in a certain way,
+# and a graphic file in any format Ace supports.
+#
+#==============================================================================
+# ▼ Important
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# Bitmap fonts will ignore text codes that attempt to change their color, size,
+# outline, shadow, and other properties: if you need these features, you should
+# use regular fonts for these areas. Bitmap fonts provide great flexibility in
+# decorations and pixel perfect rendering, but they are not a replacement for
+# standard font files, but are rather an alternative with their own pros and 
+# cons.
+#
+#==============================================================================
+# ▼ How to use
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# There are multiple tools out there for making bitmap font files, but the
+# following website has a great tool that is absolutely free:
+# http://kvazars.com/littera/
+# 
+# Make sure that you select "XML (.fnt)" in the "Format" dropdown menu, and
+# that you give it the name you want for the font in the "Name" box.
+#
+# To download your font, click Export > Start > Download file. Just ignore
+# the settings dialogue in between.
+#
+# Your browser should then download a .zip file with your font; copy both
+# files into your designated (default "BitmapFonts") bitmap font folder in
+# your project. The script will find them by itself.
+# 
+# Then set this font in one of the config areas below (either as the global
+# default font, or for a specific section) by setting the respective variables
+# to the name you chose for your font.
+#
+#==============================================================================
+# ▼ Installation
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# To install this script, open up your script editor and copy/paste this script
+# to an open slot below ▼ Materials/素材 but above ▼ Main. Remember to save.
+#
+#==============================================================================
+# ▼ License
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# Free for non-commercial and commercial use. Please credit Tor Damian Design.
+# You are free to share script freely with everyone, but please retain this
+# description and license. Thank you.
 #==============================================================================
 module TDD
 module ABF
