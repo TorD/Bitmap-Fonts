@@ -3,9 +3,9 @@ plugins = {
     order: [
       "Settings",
       :rest,
-      "load_all_fonts"
     ],
-    "Engine Extensions" => {}
+    "Engine Extensions" => {},
+    "Loading Fonts" => {}
   }
 }
 
