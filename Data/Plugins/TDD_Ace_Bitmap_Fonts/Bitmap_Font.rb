@@ -59,6 +59,10 @@ class Bitmap_Font
     @info[:base]
   end
 
+  def name=(value)
+    
+  end
+
   def size=(value)
     
   end
@@ -73,6 +77,18 @@ class Bitmap_Font
 
   def color
     Color.new
+  end
+
+  def outline=(value)
+    
+  end
+
+  def out_color=(value)
+    
+  end
+
+  def shadow=(value)
+    
   end
 end
 end

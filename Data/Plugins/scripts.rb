@@ -5,7 +5,9 @@ module SETTINGS
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Debug Mode - 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  # If enabled, will print information for debugging in the console.
+  # If enabled, will print information for debugging in the console, like which
+  # fonts get loaded and with what font name. Useful if you're not sure what
+  # name to use when setting fonts below.
   #
   # OPTIONS:
   #   true      (ON)
@@ -13,8 +15,8 @@ module SETTINGS
   #
   # DEFAULT: false
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEBUG_MODE = true
-  
+  DEBUG_MODE = false
+
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Font Folder - 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
@@ -165,6 +167,10 @@ class Bitmap_Font
     @info[:base]
   end
 
+  def name=(value)
+    
+  end
+
   def size=(value)
     
   end
@@ -179,6 +185,18 @@ class Bitmap_Font
 
   def color
     Color.new
+  end
+
+  def outline=(value)
+    
+  end
+
+  def out_color=(value)
+    
+  end
+
+  def shadow=(value)
+    
   end
 end
 end
