@@ -1,4 +1,7 @@
 class Bitmap
+  #--------------------------------------------------------------------------
+  # * EXTEND Draw Text
+  #--------------------------------------------------------------------------
   alias_method :original_draw_text_tdd_abf_bitmap, :draw_text
   def draw_text(*args)
     if bitmap_font?
@@ -7,11 +10,14 @@ class Bitmap
       original_draw_text_tdd_abf_bitmap(*args)
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Draw Bitmap Text
+  #--------------------------------------------------------------------------
   def draw_bitmap_text(*args)
+    # Parse args
     dim_rect, str, align = parse_draw_text_args(args)
-    puts "draw_bitmap_text: #{dim_rect}, #{str}, #{align}"
 
+    # Create src rect for bitmap blt
     src_rect = Rect.new
 
     # Setup x and y origin
@@ -56,7 +62,9 @@ class Bitmap
       last_char = char
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * EXTEND Get font
+  #--------------------------------------------------------------------------
   alias_method :original_get_font_tdd_abf_bitmap, :font
   def font
     if TDD::ABF::SETTINGS::DEFAULT_FONT
@@ -65,16 +73,22 @@ class Bitmap
       original_get_font_tdd_abf_bitmap
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Check if using Bitmap Font?
+  #--------------------------------------------------------------------------
   def bitmap_font?
     TDD::ABF::Font_Database.has_font?(font.name)
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Parse draw_text args
+  #--------------------------------------------------------------------------
   def parse_draw_text_args(args)
     return args if args.first.is_a? Rect
     return Rect.new(args[0], args[1], args[2], args[3]), args[4], args[5]
   end
-
+  #--------------------------------------------------------------------------
+  # * EXTEND Text size
+  #--------------------------------------------------------------------------
   alias_method :original_text_size_tdd_abf_bitmap, :text_size
   def text_size(str)
     if bitmap_font?
@@ -83,7 +97,9 @@ class Bitmap
       original_text_size_tdd_abf_bitmap(str)
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Get bitmap text width
+  #--------------------------------------------------------------------------
   def bitmap_text_width(str)
     text_width = 0.0
     last_char = nil
@@ -94,7 +110,6 @@ class Bitmap
         next unless char_data
         text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
         text_width += font.kerning(last_char, char) if last_char
-        puts "text_width: #{text_width}"
         last_char = char
       end
       text_width += char_data.width - char_data.x_advance if char_data
@@ -102,7 +117,6 @@ class Bitmap
       char_data = font.char_data_for(str.to_s)
       text_width += char_data.x_advance if char_data
     end
-    puts "bitmap_text_width for #{str} = #{text_width}"
     text_width
   end
 end
