@@ -32,6 +32,11 @@ module SETTINGS
   # If you set this to a font name using the format "font name", this will be
   # used globally for all text. You can still override individual message boxes
   # using script calls, and individual sections using the below settings.
+  # OPTIONS:
+  #   "name of font"  (ON, using named font)
+  #   false           (OFF)
+  #
+  # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   DEFAULT_FONT = "pixel"
 

@@ -33,6 +33,11 @@ module SETTINGS
   # If you set this to a font name using the format "font name", this will be
   # used globally for all text. You can still override individual message boxes
   # using script calls, and individual sections using the below settings.
+  # OPTIONS:
+  #   "name of font"  (ON, using named font)
+  #   false           (OFF)
+  #
+  # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   DEFAULT_FONT = "pixel"
 
@@ -154,50 +159,58 @@ class Bitmap_Font
   def size
     @info[:size]
   end
-
+  #--------------------------------------------------------------------------
+  # * Check if bold
+  # = (Boolean)
+  #--------------------------------------------------------------------------
+  def bold
+    @info[:bold]
+  end
+  #--------------------------------------------------------------------------
+  # * Check if italic
+  # = (Boolean)
+  #--------------------------------------------------------------------------
+  def italic
+    @info[:italic]
+  end
+  #--------------------------------------------------------------------------
+  # * Get line height
+  # = (Integer)
+  #--------------------------------------------------------------------------
   def line_height
     @info[:lineHeight]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get letter spacing
+  # = [x, y] (Array)
+  #--------------------------------------------------------------------------
   def letter_spacing
     @info[:spacing]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get base of font
+  # = (Integer)
+  #--------------------------------------------------------------------------
   def base
     @info[:base]
   end
-
-  def name=(value)
-    
-  end
-
-  def size=(value)
-    
-  end
-
-  def bold=(value)
-    
-  end
-
-  def italic=(value)
-    
-  end
-
+  #--------------------------------------------------------------------------
+  # * Get blank color object, for compatibility
+  # = (Color)
+  #--------------------------------------------------------------------------
   def color
     Color.new
   end
-
-  def outline=(value)
-    
-  end
-
-  def out_color=(value)
-    
-  end
-
-  def shadow=(value)
-    
-  end
+  #--------------------------------------------------------------------------
+  # * Setters without function, for compatibility
+  #--------------------------------------------------------------------------
+  def name=(value); end
+  def size=(value); end
+  def bold=(value); end
+  def italic=(value); end
+  def outline=(value); end
+  def out_color=(value); end
+  def shadow=(value); end
 end
 end
 end
