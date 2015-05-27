@@ -3,6 +3,19 @@ module TDD
 module ABF
 module SETTINGS
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Debug Mode - 
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # If enabled, will print information for debugging in the console.
+  #
+  # OPTIONS:
+  #   true      (ON)
+  #   false     (OFF)
+  #
+  # DEFAULT: false
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  DEBUG_MODE = true
+  
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Font Folder - 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # This is the folder relative to your project's root folder
@@ -33,7 +46,7 @@ module SETTINGS
   #
   # DEFAULT: true
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  CENTER_VERTICAL = false
+  CENTER_VERTICAL = true
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Auto Reize Text -
@@ -69,6 +82,25 @@ module SETTINGS
   # DEFAULT: false
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   AUTO_RESIZE_INTERFACE = true
+
+  #!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!
+  # - Advanced Settings Below -
+  #!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!
+
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Font File Parser -
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # The parser to use for font files. More parsers might be added later by me,
+  # you or other scripters; this facilitates an easier way of enabling them.
+  #
+  # OPTIONS:
+  #   :default  (standard bitmap font .fnt files with an XML document structure)
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  FONT_FILE_PARSER = :default
+
+  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # - End Of Configuration -
+  #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 end
 end
 end
@@ -151,41 +183,69 @@ class Bitmap_Font
 end
 end
 end
+#==============================================================================
+# ** Module TDD::ABF::Char_Data
+#------------------------------------------------------------------------------
+# This class acts as an accessor and instance of individual character data
+# entries.
+#==============================================================================
 module TDD
 module ABF
 class Char_Data
+  #--------------------------------------------------------------------------
+  # * Initializer
+  # > data_hash: Expects a standardized bitmap font data hash. See
+  #              TDD::ABF::Standard_Font_Parser
+  #--------------------------------------------------------------------------
   def initialize(data_hash)
     @data = data_hash
   end
-
+  #--------------------------------------------------------------------------
+  # * Get Character Id
+  #--------------------------------------------------------------------------
   def id
     @data[:id]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get bitmap x position of character
+  #--------------------------------------------------------------------------
   def x
     @data[:x]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get bitmap y position of character
+  #--------------------------------------------------------------------------
   def y
     @data[:y]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get bitmap width of character
+  #--------------------------------------------------------------------------
   def width
     @data[:width]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get bitmap height of character
+  #--------------------------------------------------------------------------
   def height
     @data[:height]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get drawing x offset
+  #--------------------------------------------------------------------------
   def x_offset
     @data[:xoffset]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get drawing y offset
+  #--------------------------------------------------------------------------
   def y_offset
     @data[:yoffset]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get x advance, the amount of pixels until the next character's drawing
+  #   point
+  #--------------------------------------------------------------------------
   def x_advance
     @data[:xadvance]
   end
@@ -198,8 +258,8 @@ module Font_Database
   module_function
   def load_font(font_data_file)
     font = TDD::ABF::Bitmap_Font.new(font_data_file)
-    puts "Loading font: #{font.name}"
     fonts[font.name] = font
+    return font
   end
 
   def fonts
@@ -216,21 +276,33 @@ module Font_Database
 end
 end
 end
+#==============================================================================
+# ** Module TDD::ABF::Kerning_Data
+#------------------------------------------------------------------------------
+# This class acts as an accessor and instance of individual kerning data
+# entries.
+#==============================================================================
 module TDD
 module ABF
 class Kerning_Data
   def initialize(hash)
     @data = hash
   end
-
+  #--------------------------------------------------------------------------
+  # * Get first character code
+  #--------------------------------------------------------------------------
   def first
     @data[:first]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get second character code
+  #--------------------------------------------------------------------------
   def second
     @data[:second]
   end
-
+  #--------------------------------------------------------------------------
+  # * Get amount to kern
+  #--------------------------------------------------------------------------
   def amount
     @data[:amount]
   end
@@ -347,10 +419,19 @@ module Standard_Font_Parser
 end
 end
 end
+#==============================================================================
+# ** Module TDD::ABF::Window_Helpers
+#------------------------------------------------------------------------------
+# This mixin is used to perform additional calculations in numerous window
+# extensions
+#==============================================================================
 module TDD
 module ABF
 module Window_Helpers
-  def bitmap_window_width
+  #--------------------------------------------------------------------------
+  # * Get bitmap font window width
+  #--------------------------------------------------------------------------
+  def bitmap_font_window_width
     return false unless TDD::ABF::SETTINGS::AUTO_RESIZE_INTERFACE
     bitmap = Bitmap.new(1, 1)
     return @list.map{|i| bitmap.bitmap_text_width(i[:name])}.max + 32 if bitmap.bitmap_font?
@@ -359,9 +440,15 @@ module Window_Helpers
 end
 end
 end
+if TDD::ABF::SETTINGS::DEBUG_MODE
+  puts "================================="
+  puts "TDD Ace Bitmap Fonts - Debug info"
+  puts "================================="
+end
 # Load all font files
-Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.fnt") do |file|
-  TDD::ABF::Font_Database.load_font(load_data(file))
+Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.fnt") do |file|  
+  font = TDD::ABF::Font_Database.load_font(load_data(file))
+  puts "> Loading font #{font.name} (#{file})" if TDD::ABF::SETTINGS::DEBUG_MODE
 end
 
 # Control settings
@@ -369,6 +456,9 @@ if TDD::ABF::SETTINGS::DEFAULT_FONT && !TDD::ABF::Font_Database.has_font?(TDD::A
   raise "TDD Ace Bitmap Fonts: Cannot find font face #{TDD::ABF::SETTINGS::DEFAULT_FONT} in folder #{TDD::ABF::SETTINGS::FOLDER}; are you sure it's there?"
 end
 class Bitmap
+  #--------------------------------------------------------------------------
+  # * EXTEND Draw Text
+  #--------------------------------------------------------------------------
   alias_method :original_draw_text_tdd_abf_bitmap, :draw_text
   def draw_text(*args)
     if bitmap_font?
@@ -377,11 +467,14 @@ class Bitmap
       original_draw_text_tdd_abf_bitmap(*args)
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Draw Bitmap Text
+  #--------------------------------------------------------------------------
   def draw_bitmap_text(*args)
+    # Parse args
     dim_rect, str, align = parse_draw_text_args(args)
-    puts "draw_bitmap_text: #{dim_rect}, #{str}, #{align}"
 
+    # Create src rect for bitmap blt
     src_rect = Rect.new
 
     # Setup x and y origin
@@ -426,7 +519,9 @@ class Bitmap
       last_char = char
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * EXTEND Get font
+  #--------------------------------------------------------------------------
   alias_method :original_get_font_tdd_abf_bitmap, :font
   def font
     if TDD::ABF::SETTINGS::DEFAULT_FONT
@@ -435,16 +530,22 @@ class Bitmap
       original_get_font_tdd_abf_bitmap
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Check if using Bitmap Font?
+  #--------------------------------------------------------------------------
   def bitmap_font?
     TDD::ABF::Font_Database.has_font?(font.name)
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Parse draw_text args
+  #--------------------------------------------------------------------------
   def parse_draw_text_args(args)
     return args if args.first.is_a? Rect
     return Rect.new(args[0], args[1], args[2], args[3]), args[4], args[5]
   end
-
+  #--------------------------------------------------------------------------
+  # * EXTEND Text size
+  #--------------------------------------------------------------------------
   alias_method :original_text_size_tdd_abf_bitmap, :text_size
   def text_size(str)
     if bitmap_font?
@@ -453,7 +554,9 @@ class Bitmap
       original_text_size_tdd_abf_bitmap(str)
     end
   end
-
+  #--------------------------------------------------------------------------
+  # * NEW Get bitmap text width
+  #--------------------------------------------------------------------------
   def bitmap_text_width(str)
     text_width = 0.0
     last_char = nil
@@ -464,7 +567,6 @@ class Bitmap
         next unless char_data
         text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
         text_width += font.kerning(last_char, char) if last_char
-        puts "text_width: #{text_width}"
         last_char = char
       end
       text_width += char_data.width - char_data.x_advance if char_data
@@ -472,31 +574,24 @@ class Bitmap
       char_data = font.char_data_for(str.to_s)
       text_width += char_data.x_advance if char_data
     end
-    puts "bitmap_text_width for #{str} = #{text_width}"
     text_width
   end
 end
 module Cache
+  #--------------------------------------------------------------------------
+  # * Get Bitmap Font
+  #--------------------------------------------------------------------------
   def self.bitmap_font(filename)
     load_bitmap("#{TDD::ABF::SETTINGS::FOLDER}/", filename)
   end
 end
-class Window_Base
-  # NEW
-  def bitmap_window_width
-    if !disposed?
-      puts "window_width: #{contents.bitmap_font?}"
-      @list.map{|i| contents.bitmap_text_width(i[:name])}.max
-    else
-      original_window_width_tdd_abf_window_command
-    end
-  end
-end
 class Window_TitleCommand < Window_Command
   include TDD::ABF::Window_Helpers
+  #--------------------------------------------------------------------------
+  # * EXTENDED Window Width
+  #--------------------------------------------------------------------------
   alias_method :original_window_width_tdd_abf, :window_width
   def window_width
-    puts "window_width: #{bitmap_window_width}"
-    bitmap_window_width || original_window_width_tdd_abf
+    bitmap_font_window_width || original_window_width_tdd_abf
   end
 end

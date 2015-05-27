@@ -4,8 +4,8 @@ module Font_Database
   module_function
   def load_font(font_data_file)
     font = TDD::ABF::Bitmap_Font.new(font_data_file)
-    puts "Loading font: #{font.name}"
     fonts[font.name] = font
+    return font
   end
 
   def fonts
