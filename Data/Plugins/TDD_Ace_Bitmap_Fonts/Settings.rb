@@ -1,3 +1,25 @@
+#==============================================================================
+#
+# TDD Ace Bitmap Font
+# _____________________________________________________________________________
+#
+# + Author:   Galenmereth / Tor Damian Design
+# + E-mail:   post@tordamian.com
+# -----------------------------------------------------------------------------
+# + Version:  0.0.5
+# + Date:     05/27/2015
+# -----------------------------------------------------------------------------
+# + License:  Free for non-commercial and commercial use. Please credit
+#             Tor Damian Design. You are free to share script freely with
+#             everyone, but please retain this description and license.
+#             Thank you.
+# _____________________________________________________________________________
+#
+# + Changelog:
+#
+# 0.0.5   Core functionality of rendering bitmap fonts based on the standardized 
+#         bitmap font format implemented.
+#==============================================================================
 module TDD
 module ABF
 module SETTINGS
