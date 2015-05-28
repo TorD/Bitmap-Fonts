@@ -110,7 +110,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "horror"
+  DEFAULT_FONT = "pixel"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -247,7 +247,10 @@ class Bitmap_Font
     @info[:size]
   end
   def calc_size
-    size - padding[1]
+    (sizes.inject(:+).to_f / sizes.size) + padding[0]
+  end
+  def sizes
+    [base, size, @info[:lineHeight]]
   end
   def padding
     @info[:padding]
@@ -765,7 +768,6 @@ Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.fnt") do |file|
   font = TDD::ABF::Font_Database.load_font(open(file, "r").read.to_s)
   #font = TDD::ABF::Font_Database.load_font(load_data(file))
   puts "> Loading font \"#{font.name}\" (#{file})" if TDD::ABF::SETTINGS::DEBUG_MODE
-  puts "Data: #{font.line_height}"
 end
 
 # Control settings

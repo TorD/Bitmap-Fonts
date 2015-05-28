@@ -1,12 +1,9 @@
-(eval):696:in `contents': disposed window, RGSSError
-	from (eval):696:in `line_height'
-	from Window_Base:60:in `fitting_height'
-	from Window_Command:29:in `window_height'
-	from Window_Command:14:in `initialize'
-	from Window_TitleCommand:12:in `initialize'
-	from Scene_Title:92:in `new'
-	from Scene_Title:92:in `create_command_window'
-	from Scene_Title:17:in `start'
+(eval):250:in `calc_size': undefined local variable or method `arr' for #<TDD::ABF::Bitmap_Font:0xdf45b34>, NameError
+	from (eval):625:in `draw_bitmap_text'
+	from (eval):597:in `draw_text'
+	from Scene_Title:61:in `draw_game_title'
+	from Scene_Title:53:in `create_foreground'
+	from Scene_Title:16:in `start'
 	from Scene_Base:12:in `main'
 	from SceneManager:23:in `run'
 	from Main:13:in `block in <main>'
