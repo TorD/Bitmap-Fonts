@@ -1,7 +1,7 @@
 # encoding: UTF-8
 #==============================================================================
 #
-# TDD Ace Bitmap Font - 0.0.6
+# TDD Ace Bitmap Font - 0.0.8
 # _____________________________________________________________________________
 #
 # + Author:   Galenmereth / Tor Damian Design
@@ -14,6 +14,10 @@
 #
 # ▼ Changelog
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# 0.0.8   Added ADJUST_HORIZONTAL_DRAW_POSITION setting.
+#
+# 0.0.7   Added ADJUST_VERTICAL_DRAW_POSITION setting.
+#
 # 0.0.6   Fixed line height bugs and added OVERRIDE_LINE_HEIGHT setting.
 #
 # 0.0.5   Core functionality of rendering bitmap fonts based on the standardized 
@@ -64,6 +68,13 @@
 # to an open slot below ▼ Materials/素材 but above ▼ Main. Remember to save.
 #
 #==============================================================================
+# ▼ Thanks and credits
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# # Testers:
+#   * Sharm
+#   * Vexed
+#
+#==============================================================================
 # ▼ License
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
 # Free for non-commercial and commercial use. Please credit Tor Damian Design.
@@ -110,7 +121,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "pixel"
+  DEFAULT_FONT = "POPit"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -172,14 +183,49 @@ module SETTINGS
   # also adjust lineHeight= in the .fnt file, but this can be more convenient.
   #
   # FORMAT:
-  #   "font name" => 20     (20 being the desired line height)
+  #   "font name" => 20,     (20 being the desired line height)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  OVERRIDE_LINE_HEIGHT = { # Don't edit this
+  OVERRIDE_LINE_HEIGHT = {# Don't edit this
   # Add new overrides below; remember to end each line with a comma (,)
-    "horror" => 20,
+    "POPit" => 23,
   # "example" => 15,
   #
-  } # Don't edit this
+  }# Don't edit this
+
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Adjust Vertical Draw Position -
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # Sometimes the letters won't get drawn as you'd like them to, and this
+  # setting lets you add a modifier to the vertical drawing position of letters
+  # for each font. The adjustment amount can be positive (5) and negative (-5).
+  # This setting is different from the override to line height in that it only
+  # affects the drawing position of the letters, not the actual dimensions or
+  # size.
+  #
+  # FORMAT:
+  #   "font name" => 5,    (5 being the desired adjustment to vertical position)
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  ADJUST_VERTICAL_DRAW_POSITION = {# Don't edit this
+  # Add new adjustments below; remember to end each line with a comma (,)
+    "POPit"     => 4,
+  # "font name" => 5,
+  }# Don't edit this
+
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Adjust Horizontal Draw Position -
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # Sometimes the letters won't get drawn as you'd like them to, and this
+  # setting lets you add a modifier to the start horizontal drawing position of
+  # letters for each font. Adjustment can be positive (5) or negative (-5).
+  #
+  # FORMAT:
+  #   "font name" => 5,  (5 being the desired adjustment to horizontal position)
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  ADJUST_HORIZONTAL_DRAW_POSITION = {# Don't edit this
+  # Add new adjustments below; remember to end each line with a comma (,)
+    "POPit"     => 3,
+  # "font name" => 5,
+  }# Don't edit this
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Font File Parser - NOT YET DONE
@@ -254,6 +300,12 @@ class Bitmap_Font
   end
   def padding
     @info[:padding]
+  end
+  def horizontal_adjustment
+    TDD::ABF::SETTINGS::ADJUST_HORIZONTAL_DRAW_POSITION[name] || 0
+  end
+  def vertical_adjustment
+    TDD::ABF::SETTINGS::ADJUST_VERTICAL_DRAW_POSITION[name] || 0
   end
   #--------------------------------------------------------------------------
   # * Check if bold
@@ -427,6 +479,41 @@ end
 end
 end
 #==============================================================================
+# ** Module TDD::ABF::General_Helper
+#------------------------------------------------------------------------------
+# This mixin is used as a mixin or standalone helper for various calculations
+#==============================================================================
+module TDD
+module ABF
+module General_Helper
+  module_function
+  #--------------------------------------------------------------------------
+  # * Calculate combined text width of bitmap font
+  #--------------------------------------------------------------------------
+  def calculate_text_width(str, font)
+    if str.to_s.length > 1
+      char_data = nil
+      last_char = nil
+      text_width = font.horizontal_adjustment.to_f * 2 
+      str.to_s.each_char do |char|
+        char_data = font.char_data_for(char)
+        next unless char_data
+        text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
+        text_width += font.kerning(last_char, char) if last_char
+        last_char = char
+      end
+      text_width += char_data.width - char_data.x_advance if char_data
+    else
+      text_width = 0.0
+      char_data = font.char_data_for(str.to_s)
+      text_width += char_data.x_advance if char_data
+    end
+    text_width
+  end
+end
+end
+end
+#==============================================================================
 # ** Module TDD::ABF::Kerning_Data
 #------------------------------------------------------------------------------
 # This class acts as an accessor and instance of individual kerning data
@@ -458,6 +545,176 @@ class Kerning_Data
   end
 end
 end
+end
+#==============================================================================
+# ** Module TDD::ABF::Window_Helpers
+#------------------------------------------------------------------------------
+# This mixin is used to perform additional calculations in numerous window
+# extensions
+#==============================================================================
+module TDD
+module ABF
+module Window_Helpers
+  #--------------------------------------------------------------------------
+  # * Get bitmap font window width
+  #--------------------------------------------------------------------------
+  def bitmap_font_window_width
+    return false unless TDD::ABF::SETTINGS::AUTO_RESIZE_INTERFACE
+    bitmap = Bitmap.new(1, 1)
+    return @list.map{|i| bitmap.bitmap_text_width(i[:name])}.max + 32 if bitmap.bitmap_font?
+    return false
+  end
+end
+end
+end
+class Bitmap
+  include TDD::ABF::General_Helper
+  #--------------------------------------------------------------------------
+  # * EXTEND Draw Text
+  #--------------------------------------------------------------------------
+  alias_method :original_draw_text_tdd_abf_bitmap, :draw_text
+  def draw_text(*args)
+    if bitmap_font?
+      draw_bitmap_text(*args)
+    else
+      original_draw_text_tdd_abf_bitmap(*args)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * NEW Draw Bitmap Text
+  #--------------------------------------------------------------------------
+  def draw_bitmap_text(*args)
+    # Parse args
+    dim_rect, str, align = parse_draw_text_args(args)
+
+    # Create src rect for bitmap blt
+    src_rect = Rect.new
+
+    # Setup x and y origin
+    align ||= 0
+    case align
+    when 0
+      x = dim_rect.x
+    when 1
+      x = dim_rect.x + ((dim_rect.width - bitmap_text_width(str)) / 2)
+    when 2
+      x = (dim_rect.x + dim_rect.width) - bitmap_text_width(str)
+    end
+    x += font.horizontal_adjustment
+
+    # Setup y origin
+    oy = dim_rect.y
+    oy += ((dim_rect.height - font.calc_size) / 2) if TDD::ABF::SETTINGS::CENTER_VERTICAL
+    oy += font.vertical_adjustment
+
+    # Make last char local var for keeping
+    last_char = nil
+
+    # Draw each character
+    str.to_s.each_char do |char|
+      # Get char data
+      char_data = font.char_data_for(char)
+      next unless char_data 
+
+      # Setup
+      src_rect.set(char_data.x, char_data.y, char_data.width, char_data.height)
+      y = oy
+      y += char_data.y_offset + font.letter_spacing[1]
+      x += font.letter_spacing[0] + char_data.x_offset
+      x += font.kerning(last_char, char) if last_char
+
+      # Draw
+      blt(x, y, Cache.bitmap_font(font.file), src_rect)
+
+      # Increase x
+      x += char_data.x_advance
+      last_char = char
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * EXTEND Get font
+  #--------------------------------------------------------------------------
+  alias_method :original_get_font_tdd_abf_bitmap, :font
+  def font
+    if bitmap_font?
+      return TDD::ABF::Font_Database.get_default_font
+    else
+      original_get_font_tdd_abf_bitmap
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * NEW Check if using Bitmap Font?
+  #--------------------------------------------------------------------------
+  def bitmap_font?
+    TDD::ABF::Font_Database.default_is_bitmap?
+  end
+  #--------------------------------------------------------------------------
+  # * NEW Parse draw_text args
+  #--------------------------------------------------------------------------
+  def parse_draw_text_args(args)
+    return args if args.first.is_a? Rect
+    return Rect.new(args[0], args[1], args[2], args[3]), args[4], args[5]
+  end
+  #--------------------------------------------------------------------------
+  # * EXTEND Text size
+  #--------------------------------------------------------------------------
+  alias_method :original_text_size_tdd_abf_bitmap, :text_size
+  def text_size(str)
+    if bitmap_font?
+      return Rect.new(0, 0, bitmap_text_width(str), font.line_height)
+    else
+      original_text_size_tdd_abf_bitmap(str)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * NEW Get bitmap text width
+  #--------------------------------------------------------------------------
+  def bitmap_text_width(str)
+    calculate_text_width(str, font)
+  end
+end
+module Cache
+  #--------------------------------------------------------------------------
+  # * Get Bitmap Font
+  #--------------------------------------------------------------------------
+  def self.bitmap_font(filename)
+    load_bitmap("#{TDD::ABF::SETTINGS::FOLDER}/", filename)
+  end
+end
+class Window_Base < Window
+  #--------------------------------------------------------------------------
+  # * EXTEND Line Height
+  #--------------------------------------------------------------------------
+  # alias_method :original_line_height_tdd_abf, :line_height
+  # def line_height
+  #   if TDD::ABF::Font_Database.default_is_bitmap?
+  #     TDD::ABF::Font_Database.get_default_font.size
+  #   else
+  #     original_line_height_tdd_abf
+  #   end
+  # end
+  #--------------------------------------------------------------------------
+  # * EXTEND Calculate Line Height
+  #     restore_font_size : Return to original font size after calculating
+  #--------------------------------------------------------------------------
+  alias_method :original_calc_line_height_tdd_abf, :calc_line_height
+  def calc_line_height(text, restore_font_size = true)
+    if TDD::ABF::Font_Database.default_is_bitmap?
+      TDD::ABF::Font_Database.get_default_font.line_height
+    else
+      original_calc_line_height_tdd_abf(text, restore_font_size)
+    end
+  end
+end
+class Window_TitleCommand < Window_Command
+  include TDD::ABF::Window_Helpers
+  #--------------------------------------------------------------------------
+  # * EXTENDED Window Width
+  #--------------------------------------------------------------------------
+  alias_method :original_window_width_tdd_abf, :window_width
+  def window_width
+    bitmap_font_window_width || original_window_width_tdd_abf
+  end
 end
 #==============================================================================
 # ** Module TDD::ABF::Standard_Font_Parser
@@ -570,197 +827,14 @@ end
 end
 end
 #==============================================================================
-# ** Module TDD::ABF::Window_Helpers
-#------------------------------------------------------------------------------
-# This mixin is used to perform additional calculations in numerous window
-# extensions
-#==============================================================================
-module TDD
-module ABF
-module Window_Helpers
-  #--------------------------------------------------------------------------
-  # * Get bitmap font window width
-  #--------------------------------------------------------------------------
-  def bitmap_font_window_width
-    return false unless TDD::ABF::SETTINGS::AUTO_RESIZE_INTERFACE
-    bitmap = Bitmap.new(1, 1)
-    return @list.map{|i| bitmap.bitmap_text_width(i[:name])}.max + 32 if bitmap.bitmap_font?
-    return false
-  end
-end
-end
-end
-class Bitmap
-  #--------------------------------------------------------------------------
-  # * EXTEND Draw Text
-  #--------------------------------------------------------------------------
-  alias_method :original_draw_text_tdd_abf_bitmap, :draw_text
-  def draw_text(*args)
-    if bitmap_font?
-      draw_bitmap_text(*args)
-    else
-      original_draw_text_tdd_abf_bitmap(*args)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * NEW Draw Bitmap Text
-  #--------------------------------------------------------------------------
-  def draw_bitmap_text(*args)
-    # Parse args
-    dim_rect, str, align = parse_draw_text_args(args)
-
-    # Create src rect for bitmap blt
-    src_rect = Rect.new
-
-    # Setup x and y origin
-    align ||= 0
-    case align
-    when 0
-      x = dim_rect.x
-    when 1
-      x = dim_rect.x + ((dim_rect.width - bitmap_text_width(str)) / 2)
-    when 2
-      x = (dim_rect.x + dim_rect.width) - bitmap_text_width(str)
-    end
-
-    # Setup y origin
-    oy = dim_rect.y
-    oy += ((dim_rect.height - font.calc_size) / 2) if TDD::ABF::SETTINGS::CENTER_VERTICAL
-
-    # Make last char local var for keeping
-    last_char = nil
-
-    # Draw each character
-    str.to_s.each_char do |char|
-      # Get char data
-      char_data = font.char_data_for(char)
-      next unless char_data 
-
-      # Setup
-      src_rect.set(char_data.x, char_data.y, char_data.width, char_data.height)
-      y = oy
-      y += char_data.y_offset + font.letter_spacing[1]
-      x += font.letter_spacing[0] + char_data.x_offset
-      x += font.kerning(last_char, char) if last_char
-
-      # Draw
-      blt(x, y, Cache.bitmap_font(font.file), src_rect)
-
-      # Increase x
-      x += char_data.x_advance
-      last_char = char
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * EXTEND Get font
-  #--------------------------------------------------------------------------
-  alias_method :original_get_font_tdd_abf_bitmap, :font
-  def font
-    if bitmap_font?
-      return TDD::ABF::Font_Database.get_default_font
-    else
-      original_get_font_tdd_abf_bitmap
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * NEW Check if using Bitmap Font?
-  #--------------------------------------------------------------------------
-  def bitmap_font?
-    TDD::ABF::Font_Database.default_is_bitmap?
-  end
-  #--------------------------------------------------------------------------
-  # * NEW Parse draw_text args
-  #--------------------------------------------------------------------------
-  def parse_draw_text_args(args)
-    return args if args.first.is_a? Rect
-    return Rect.new(args[0], args[1], args[2], args[3]), args[4], args[5]
-  end
-  #--------------------------------------------------------------------------
-  # * EXTEND Text size
-  #--------------------------------------------------------------------------
-  alias_method :original_text_size_tdd_abf_bitmap, :text_size
-  def text_size(str)
-    if bitmap_font?
-      return Rect.new(0, 0, bitmap_text_width(str), font.line_height)
-    else
-      original_text_size_tdd_abf_bitmap(str)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * NEW Get bitmap text width
-  #--------------------------------------------------------------------------
-  def bitmap_text_width(str)
-    text_width = 0.0
-    last_char = nil
-    char_data = nil
-    if str.to_s.length > 1
-      str.to_s.each_char do |char|
-        char_data = font.char_data_for(char)
-        next unless char_data
-        text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
-        text_width += font.kerning(last_char, char) if last_char
-        last_char = char
-      end
-      text_width += char_data.width - char_data.x_advance if char_data
-    else
-      char_data = font.char_data_for(str.to_s)
-      text_width += char_data.x_advance if char_data
-    end
-    text_width
-  end
-end
-module Cache
-  #--------------------------------------------------------------------------
-  # * Get Bitmap Font
-  #--------------------------------------------------------------------------
-  def self.bitmap_font(filename)
-    load_bitmap("#{TDD::ABF::SETTINGS::FOLDER}/", filename)
-  end
-end
-class Window_Base < Window
-  #--------------------------------------------------------------------------
-  # * EXTEND Line Height
-  #--------------------------------------------------------------------------
-  # alias_method :original_line_height_tdd_abf, :line_height
-  # def line_height
-  #   if TDD::ABF::Font_Database.default_is_bitmap?
-  #     TDD::ABF::Font_Database.get_default_font.size
-  #   else
-  #     original_line_height_tdd_abf
-  #   end
-  # end
-  #--------------------------------------------------------------------------
-  # * EXTEND Calculate Line Height
-  #     restore_font_size : Return to original font size after calculating
-  #--------------------------------------------------------------------------
-  alias_method :original_calc_line_height_tdd_abf, :calc_line_height
-  def calc_line_height(text, restore_font_size = true)
-    if TDD::ABF::Font_Database.default_is_bitmap?
-      TDD::ABF::Font_Database.get_default_font.line_height
-    else
-      original_calc_line_height_tdd_abf(text, restore_font_size)
-    end
-  end
-end
-class Window_TitleCommand < Window_Command
-  include TDD::ABF::Window_Helpers
-  #--------------------------------------------------------------------------
-  # * EXTENDED Window Width
-  #--------------------------------------------------------------------------
-  alias_method :original_window_width_tdd_abf, :window_width
-  def window_width
-    bitmap_font_window_width || original_window_width_tdd_abf
-  end
-end
-#==============================================================================
-# ** TDD::ABF - Load and process
+# ** TDD::ABF::Standard Font Parser - Load and process
 #------------------------------------------------------------------------------
 #  Load and process all font files at compile
 #==============================================================================
 if TDD::ABF::SETTINGS::DEBUG_MODE
-  puts "================================="
-  puts "TDD Ace Bitmap Fonts - Debug info"
-  puts "================================="
+  puts "==========================================="
+  puts "TDD Ace Bitmap Fonts - Standard .fnt Parser"
+  puts "==========================================="
 end
 
 # Load all font files
@@ -773,4 +847,24 @@ end
 # Control settings
 if TDD::ABF::SETTINGS::DEFAULT_FONT && !TDD::ABF::Font_Database.has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)
   raise "TDD Ace Bitmap Fonts: Cannot find font face #{TDD::ABF::SETTINGS::DEFAULT_FONT} in folder #{TDD::ABF::SETTINGS::FOLDER}; are you sure it's there?"
+end
+module TDD
+module ABF
+module Image_Font_Parser
+  module_function
+  def parse(font_image)
+    
+  end
+end
+end
+end
+#==============================================================================
+# ** TDD::ABF::Image Font Parser - Load and process
+#------------------------------------------------------------------------------
+#  Load and process all font files at compile
+#==============================================================================
+if TDD::ABF::SETTINGS::DEBUG_MODE
+  puts "================================================="
+  puts "TDD Ace Bitmap Fonts - Image Font .bft.png Parser"
+  puts "================================================="
 end

@@ -5,7 +5,14 @@ plugins = {
       :rest,
     ],
     "Engine Extensions" => {},
-    "Loading Fonts" => {}
+    "Parsers" => {
+      "Standard Font Parser" => {
+        order: [:rest, "load"]
+      },
+      "Image Font Parser" => {
+        order: [:rest, "load"]
+      }
+    },
   }
 }
 

@@ -55,6 +55,12 @@ class Bitmap_Font
   def padding
     @info[:padding]
   end
+  def horizontal_adjustment
+    TDD::ABF::SETTINGS::ADJUST_HORIZONTAL_DRAW_POSITION[name] || 0
+  end
+  def vertical_adjustment
+    TDD::ABF::SETTINGS::ADJUST_VERTICAL_DRAW_POSITION[name] || 0
+  end
   #--------------------------------------------------------------------------
   # * Check if bold
   # = (Boolean)

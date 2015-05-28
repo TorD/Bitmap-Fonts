@@ -1,12 +1,12 @@
 #==============================================================================
-# ** TDD::ABF - Load and process
+# ** TDD::ABF::Standard Font Parser - Load and process
 #------------------------------------------------------------------------------
 #  Load and process all font files at compile
 #==============================================================================
 if TDD::ABF::SETTINGS::DEBUG_MODE
-  puts "================================="
-  puts "TDD Ace Bitmap Fonts - Debug info"
-  puts "================================="
+  puts "==========================================="
+  puts "TDD Ace Bitmap Fonts - Standard .fnt Parser"
+  puts "==========================================="
 end
 
 # Load all font files

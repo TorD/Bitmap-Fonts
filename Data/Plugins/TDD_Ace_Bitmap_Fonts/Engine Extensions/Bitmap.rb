@@ -1,4 +1,5 @@
 class Bitmap
+  include TDD::ABF::General_Helper
   #--------------------------------------------------------------------------
   # * EXTEND Draw Text
   #--------------------------------------------------------------------------
@@ -30,10 +31,12 @@ class Bitmap
     when 2
       x = (dim_rect.x + dim_rect.width) - bitmap_text_width(str)
     end
+    x += font.horizontal_adjustment
 
     # Setup y origin
     oy = dim_rect.y
     oy += ((dim_rect.height - font.calc_size) / 2) if TDD::ABF::SETTINGS::CENTER_VERTICAL
+    oy += font.vertical_adjustment
 
     # Make last char local var for keeping
     last_char = nil
@@ -98,22 +101,6 @@ class Bitmap
   # * NEW Get bitmap text width
   #--------------------------------------------------------------------------
   def bitmap_text_width(str)
-    text_width = 0.0
-    last_char = nil
-    char_data = nil
-    if str.to_s.length > 1
-      str.to_s.each_char do |char|
-        char_data = font.char_data_for(char)
-        next unless char_data
-        text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
-        text_width += font.kerning(last_char, char) if last_char
-        last_char = char
-      end
-      text_width += char_data.width - char_data.x_advance if char_data
-    else
-      char_data = font.char_data_for(str.to_s)
-      text_width += char_data.x_advance if char_data
-    end
-    text_width
+    calculate_text_width(str, font)
   end
 end

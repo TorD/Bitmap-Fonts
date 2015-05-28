@@ -1,6 +1,6 @@
 #==============================================================================
 #
-# TDD Ace Bitmap Font - 0.0.6
+# TDD Ace Bitmap Font - 0.0.8
 # _____________________________________________________________________________
 #
 # + Author:   Galenmereth / Tor Damian Design
@@ -13,6 +13,10 @@
 #
 # ▼ Changelog
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# 0.0.8   Added ADJUST_HORIZONTAL_DRAW_POSITION setting.
+#
+# 0.0.7   Added ADJUST_VERTICAL_DRAW_POSITION setting.
+#
 # 0.0.6   Fixed line height bugs and added OVERRIDE_LINE_HEIGHT setting.
 #
 # 0.0.5   Core functionality of rendering bitmap fonts based on the standardized 
@@ -63,6 +67,13 @@
 # to an open slot below ▼ Materials/素材 but above ▼ Main. Remember to save.
 #
 #==============================================================================
+# ▼ Thanks and credits
+# -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# # Testers:
+#   * Sharm
+#   * Vexed
+#
+#==============================================================================
 # ▼ License
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
 # Free for non-commercial and commercial use. Please credit Tor Damian Design.
@@ -109,7 +120,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "pixel"
+  DEFAULT_FONT = "POPit"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -171,14 +182,49 @@ module SETTINGS
   # also adjust lineHeight= in the .fnt file, but this can be more convenient.
   #
   # FORMAT:
-  #   "font name" => 20     (20 being the desired line height)
+  #   "font name" => 20,     (20 being the desired line height)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  OVERRIDE_LINE_HEIGHT = { # Don't edit this
+  OVERRIDE_LINE_HEIGHT = {# Don't edit this
   # Add new overrides below; remember to end each line with a comma (,)
-    "horror" => 20,
+    "POPit" => 23,
   # "example" => 15,
   #
-  } # Don't edit this
+  }# Don't edit this
+
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Adjust Vertical Draw Position -
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # Sometimes the letters won't get drawn as you'd like them to, and this
+  # setting lets you add a modifier to the vertical drawing position of letters
+  # for each font. The adjustment amount can be positive (5) and negative (-5).
+  # This setting is different from the override to line height in that it only
+  # affects the drawing position of the letters, not the actual dimensions or
+  # size.
+  #
+  # FORMAT:
+  #   "font name" => 5,    (5 being the desired adjustment to vertical position)
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  ADJUST_VERTICAL_DRAW_POSITION = {# Don't edit this
+  # Add new adjustments below; remember to end each line with a comma (,)
+    "POPit"     => 4,
+  # "font name" => 5,
+  }# Don't edit this
+
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Adjust Horizontal Draw Position -
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # Sometimes the letters won't get drawn as you'd like them to, and this
+  # setting lets you add a modifier to the start horizontal drawing position of
+  # letters for each font. Adjustment can be positive (5) or negative (-5).
+  #
+  # FORMAT:
+  #   "font name" => 5,  (5 being the desired adjustment to horizontal position)
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  ADJUST_HORIZONTAL_DRAW_POSITION = {# Don't edit this
+  # Add new adjustments below; remember to end each line with a comma (,)
+    "POPit"     => 3,
+  # "font name" => 5,
+  }# Don't edit this
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Font File Parser - NOT YET DONE
