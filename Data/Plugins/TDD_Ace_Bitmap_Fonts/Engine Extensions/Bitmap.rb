@@ -32,11 +32,8 @@ class Bitmap
     end
 
     # Setup y origin
-    if TDD::ABF::SETTINGS::CENTER_VERTICAL
-      oy = dim_rect.y + (dim_rect.height - font.line_height) / 2
-    else
-      oy = dim_rect.y
-    end
+    oy = dim_rect.y
+    oy += ((dim_rect.height - font.calc_size) / 2) if TDD::ABF::SETTINGS::CENTER_VERTICAL
 
     # Make last char local var for keeping
     last_char = nil
@@ -67,8 +64,8 @@ class Bitmap
   #--------------------------------------------------------------------------
   alias_method :original_get_font_tdd_abf_bitmap, :font
   def font
-    if TDD::ABF::SETTINGS::DEFAULT_FONT
-      return TDD::ABF::Font_Database.get_font(TDD::ABF::SETTINGS::DEFAULT_FONT)
+    if bitmap_font?
+      return TDD::ABF::Font_Database.get_default_font
     else
       original_get_font_tdd_abf_bitmap
     end
@@ -77,7 +74,7 @@ class Bitmap
   # * NEW Check if using Bitmap Font?
   #--------------------------------------------------------------------------
   def bitmap_font?
-    TDD::ABF::Font_Database.has_font?(font.name)
+    TDD::ABF::Font_Database.default_is_bitmap?
   end
   #--------------------------------------------------------------------------
   # * NEW Parse draw_text args

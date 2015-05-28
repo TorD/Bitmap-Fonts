@@ -14,6 +14,7 @@ Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.fnt") do |file|
   font = TDD::ABF::Font_Database.load_font(open(file, "r").read.to_s)
   #font = TDD::ABF::Font_Database.load_font(load_data(file))
   puts "> Loading font \"#{font.name}\" (#{file})" if TDD::ABF::SETTINGS::DEBUG_MODE
+  puts "Data: #{font.line_height}"
 end
 
 # Control settings

@@ -46,6 +46,12 @@ class Bitmap_Font
   def size
     @info[:size]
   end
+  def calc_size
+    size - padding[1]
+  end
+  def padding
+    @info[:padding]
+  end
   #--------------------------------------------------------------------------
   # * Check if bold
   # = (Boolean)
@@ -65,7 +71,7 @@ class Bitmap_Font
   # = (Integer)
   #--------------------------------------------------------------------------
   def line_height
-    @info[:lineHeight]
+    TDD::ABF::SETTINGS::OVERRIDE_LINE_HEIGHT[name] || @info[:lineHeight]
   end
   #--------------------------------------------------------------------------
   # * Get letter spacing

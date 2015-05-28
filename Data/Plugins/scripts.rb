@@ -1,19 +1,21 @@
 # encoding: UTF-8
 #==============================================================================
 #
-# TDD Ace Bitmap Font - 0.0.5
+# TDD Ace Bitmap Font - 0.0.6
 # _____________________________________________________________________________
 #
 # + Author:   Galenmereth / Tor Damian Design
 # + E-mail:   post@tordamian.com
 # -----------------------------------------------------------------------------
-# + Last updated: 05/27/2015
+# + Last updated: 05/28/2015
 # + Level: Easy, Normal
 # + Requires: n/a
 # _____________________________________________________________________________
 #
 # ▼ Changelog
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# 0.0.6   Fixed line height bugs and added OVERRIDE_LINE_HEIGHT setting.
+#
 # 0.0.5   Core functionality of rendering bitmap fonts based on the standardized 
 #         bitmap font format implemented.
 #
@@ -108,7 +110,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "russian"
+  DEFAULT_FONT = "horror"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -162,6 +164,22 @@ module SETTINGS
   #!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!
   # - Advanced Settings Below -
   #!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!
+
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Override Line Height -
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # This lets you override the line height for each individual font. You can
+  # also adjust lineHeight= in the .fnt file, but this can be more convenient.
+  #
+  # FORMAT:
+  #   "font name" => 20     (20 being the desired line height)
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  OVERRIDE_LINE_HEIGHT = { # Don't edit this
+  # Add new overrides below; remember to end each line with a comma (,)
+    "horror" => 20,
+  # "example" => 15,
+  #
+  } # Don't edit this
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Font File Parser - NOT YET DONE
@@ -228,6 +246,12 @@ class Bitmap_Font
   def size
     @info[:size]
   end
+  def calc_size
+    size - padding[1]
+  end
+  def padding
+    @info[:padding]
+  end
   #--------------------------------------------------------------------------
   # * Check if bold
   # = (Boolean)
@@ -247,7 +271,7 @@ class Bitmap_Font
   # = (Integer)
   #--------------------------------------------------------------------------
   def line_height
-    @info[:lineHeight]
+    TDD::ABF::SETTINGS::OVERRIDE_LINE_HEIGHT[name] || @info[:lineHeight]
   end
   #--------------------------------------------------------------------------
   # * Get letter spacing
@@ -387,6 +411,14 @@ module Font_Database
   #--------------------------------------------------------------------------
   def has_font?(font_name)
     fonts.keys.include?(font_name)
+  end
+
+  def default_is_bitmap?
+    has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)
+  end
+
+  def get_default_font
+    get_font(TDD::ABF::SETTINGS::DEFAULT_FONT)
   end
 end
 end
@@ -589,11 +621,8 @@ class Bitmap
     end
 
     # Setup y origin
-    if TDD::ABF::SETTINGS::CENTER_VERTICAL
-      oy = dim_rect.y + (dim_rect.height - font.line_height) / 2
-    else
-      oy = dim_rect.y
-    end
+    oy = dim_rect.y
+    oy += ((dim_rect.height - font.calc_size) / 2) if TDD::ABF::SETTINGS::CENTER_VERTICAL
 
     # Make last char local var for keeping
     last_char = nil
@@ -624,8 +653,8 @@ class Bitmap
   #--------------------------------------------------------------------------
   alias_method :original_get_font_tdd_abf_bitmap, :font
   def font
-    if TDD::ABF::SETTINGS::DEFAULT_FONT
-      return TDD::ABF::Font_Database.get_font(TDD::ABF::SETTINGS::DEFAULT_FONT)
+    if bitmap_font?
+      return TDD::ABF::Font_Database.get_default_font
     else
       original_get_font_tdd_abf_bitmap
     end
@@ -634,7 +663,7 @@ class Bitmap
   # * NEW Check if using Bitmap Font?
   #--------------------------------------------------------------------------
   def bitmap_font?
-    TDD::ABF::Font_Database.has_font?(font.name)
+    TDD::ABF::Font_Database.default_is_bitmap?
   end
   #--------------------------------------------------------------------------
   # * NEW Parse draw_text args
@@ -685,6 +714,31 @@ module Cache
     load_bitmap("#{TDD::ABF::SETTINGS::FOLDER}/", filename)
   end
 end
+class Window_Base < Window
+  #--------------------------------------------------------------------------
+  # * EXTEND Line Height
+  #--------------------------------------------------------------------------
+  # alias_method :original_line_height_tdd_abf, :line_height
+  # def line_height
+  #   if TDD::ABF::Font_Database.default_is_bitmap?
+  #     TDD::ABF::Font_Database.get_default_font.size
+  #   else
+  #     original_line_height_tdd_abf
+  #   end
+  # end
+  #--------------------------------------------------------------------------
+  # * EXTEND Calculate Line Height
+  #     restore_font_size : Return to original font size after calculating
+  #--------------------------------------------------------------------------
+  alias_method :original_calc_line_height_tdd_abf, :calc_line_height
+  def calc_line_height(text, restore_font_size = true)
+    if TDD::ABF::Font_Database.default_is_bitmap?
+      TDD::ABF::Font_Database.get_default_font.line_height
+    else
+      original_calc_line_height_tdd_abf(text, restore_font_size)
+    end
+  end
+end
 class Window_TitleCommand < Window_Command
   include TDD::ABF::Window_Helpers
   #--------------------------------------------------------------------------
@@ -711,6 +765,7 @@ Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.fnt") do |file|
   font = TDD::ABF::Font_Database.load_font(open(file, "r").read.to_s)
   #font = TDD::ABF::Font_Database.load_font(load_data(file))
   puts "> Loading font \"#{font.name}\" (#{file})" if TDD::ABF::SETTINGS::DEBUG_MODE
+  puts "Data: #{font.line_height}"
 end
 
 # Control settings

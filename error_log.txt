@@ -1,9 +1,12 @@
-Yanfly Messages:326:in `reset_font_settings': undefined method `outline=' for #<TDD::ABF::Bitmap_Font:0xdf4b930>, NoMethodError
-	from Window_Base:208:in `draw_text_ex'
-	from Window_Help:41:in `refresh'
-	from Window_Help:20:in `set_text'
-	from Scene_File:39:in `create_help_window'
-	from Scene_File:13:in `start'
+(eval):696:in `contents': disposed window, RGSSError
+	from (eval):696:in `line_height'
+	from Window_Base:60:in `fitting_height'
+	from Window_Command:29:in `window_height'
+	from Window_Command:14:in `initialize'
+	from Window_TitleCommand:12:in `initialize'
+	from Scene_Title:92:in `new'
+	from Scene_Title:92:in `create_command_window'
+	from Scene_Title:17:in `start'
 	from Scene_Base:12:in `main'
 	from SceneManager:23:in `run'
 	from Main:13:in `block in <main>'

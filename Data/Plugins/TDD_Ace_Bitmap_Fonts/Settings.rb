@@ -1,18 +1,20 @@
 #==============================================================================
 #
-# TDD Ace Bitmap Font - 0.0.5
+# TDD Ace Bitmap Font - 0.0.6
 # _____________________________________________________________________________
 #
 # + Author:   Galenmereth / Tor Damian Design
 # + E-mail:   post@tordamian.com
 # -----------------------------------------------------------------------------
-# + Last updated: 05/27/2015
+# + Last updated: 05/28/2015
 # + Level: Easy, Normal
 # + Requires: n/a
 # _____________________________________________________________________________
 #
 # ▼ Changelog
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# 0.0.6   Fixed line height bugs and added OVERRIDE_LINE_HEIGHT setting.
+#
 # 0.0.5   Core functionality of rendering bitmap fonts based on the standardized 
 #         bitmap font format implemented.
 #
@@ -107,7 +109,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "russian"
+  DEFAULT_FONT = "horror"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -161,6 +163,22 @@ module SETTINGS
   #!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!
   # - Advanced Settings Below -
   #!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!
+
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # - Override Line Height -
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  # This lets you override the line height for each individual font. You can
+  # also adjust lineHeight= in the .fnt file, but this can be more convenient.
+  #
+  # FORMAT:
+  #   "font name" => 20     (20 being the desired line height)
+  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+  OVERRIDE_LINE_HEIGHT = { # Don't edit this
+  # Add new overrides below; remember to end each line with a comma (,)
+    "horror" => 20,
+  # "example" => 15,
+  #
+  } # Don't edit this
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Font File Parser - NOT YET DONE

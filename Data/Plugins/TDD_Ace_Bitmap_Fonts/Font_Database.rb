@@ -34,6 +34,14 @@ module Font_Database
   def has_font?(font_name)
     fonts.keys.include?(font_name)
   end
+
+  def default_is_bitmap?
+    has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)
+  end
+
+  def get_default_font
+    get_font(TDD::ABF::SETTINGS::DEFAULT_FONT)
+  end
 end
 end
 end
