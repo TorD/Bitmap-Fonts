@@ -15,7 +15,7 @@ module Image_Font_Parser
 
   def parse_line_starts(bitmap)
     bitmap.height.times do |y|
-      next if y < 3 # Config pixels
+      next if y < 1 # Config pixels
       @@line_starts << y if is_line_start?(0, y, bitmap)
     end
   end
@@ -23,7 +23,7 @@ module Image_Font_Parser
   def parse_bitmap(bitmap)
     bitmap.width.times do |x|
       bitmap.height.times do |y|
-        next if x == 0 && y < 3 # First three pixels are configuration pixels
+        next if x < 3 && y == 0 # First three pixels are configuration pixels
         store_dimension_data(x, y, bitmap) if is_valid_char_outline?(x, y, bitmap) && !already_stored?(x, y)
       end
     end
@@ -113,8 +113,8 @@ module Image_Font_Parser
 
   def set_vars(bitmap)
     @@char_dimensions_color = bitmap.get_pixel(0,0)
-    @@char_x_advance_color  = bitmap.get_pixel(0,1)
-    @@char_line_start_color = bitmap.get_pixel(0,2)
+    @@char_x_advance_color  = bitmap.get_pixel(1,0)
+    @@char_line_start_color = bitmap.get_pixel(2,0)
     @@char_data             = []
     @@line_starts           = []
     @@stored_control_data   = []

@@ -121,7 +121,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "bmf_example"
+  DEFAULT_FONT = "POPit"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -460,7 +460,6 @@ module General_Helper
       str.to_s.each_char do |char|
         char_data = font.char_data_for(char)
         next unless char_data
-        puts "calculate_text_width: #{font.letter_spacing[0]}, #{char_data.x_offset}, #{char_data.x_advance}"
         text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
         text_width += font.kerning(last_char, char) if last_char
         last_char = char
@@ -469,7 +468,7 @@ module General_Helper
     else
       text_width = 0.0
       char_data = font.char_data_for(str.to_s)
-      text_width += char_data.x_advance if char_data
+      text_width += font.letter_spacing[0] + char_data.x_advance if char_data
     end
     text_width
   end
@@ -841,7 +840,7 @@ module Image_Font_Parser
 
   def parse_line_starts(bitmap)
     bitmap.height.times do |y|
-      next if y < 3 # Config pixels
+      next if y < 1 # Config pixels
       @@line_starts << y if is_line_start?(0, y, bitmap)
     end
   end
@@ -849,7 +848,7 @@ module Image_Font_Parser
   def parse_bitmap(bitmap)
     bitmap.width.times do |x|
       bitmap.height.times do |y|
-        next if x == 0 && y < 3 # First three pixels are configuration pixels
+        next if x < 3 && y == 0 # First three pixels are configuration pixels
         store_dimension_data(x, y, bitmap) if is_valid_char_outline?(x, y, bitmap) && !already_stored?(x, y)
       end
     end
@@ -939,8 +938,8 @@ module Image_Font_Parser
 
   def set_vars(bitmap)
     @@char_dimensions_color = bitmap.get_pixel(0,0)
-    @@char_x_advance_color  = bitmap.get_pixel(0,1)
-    @@char_line_start_color = bitmap.get_pixel(0,2)
+    @@char_x_advance_color  = bitmap.get_pixel(1,0)
+    @@char_line_start_color = bitmap.get_pixel(2,0)
     @@char_data             = []
     @@line_starts           = []
     @@stored_control_data   = []
@@ -980,9 +979,9 @@ end
 
 # Load all font files
 Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.bft.{jpg,png,bmp}") do |file|
-  puts "> Reading bft file: (#{file}) | Please wait..." if TDD::ABF::SETTINGS::DEBUG_MODE
+  puts "> Reading bft file: \"#{file}\" | Please wait..." if TDD::ABF::SETTINGS::DEBUG_MODE
   font = TDD::ABF::Font_Database.load_font(file, TDD::ABF::Image_Font_Parser)
-  #font = TDD::ABF::Font_Database.load_font(load_data(file))
+  puts ">> Font loaded as: \"#{font.name}\"" if TDD::ABF::SETTINGS::DEBUG_MODE
 end
 # Control settings
 if TDD::ABF::SETTINGS::DEFAULT_FONT && !TDD::ABF::Font_Database.has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)
