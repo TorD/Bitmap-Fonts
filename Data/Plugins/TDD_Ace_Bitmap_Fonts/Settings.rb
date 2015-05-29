@@ -1,18 +1,21 @@
 #==============================================================================
 #
-# TDD Ace Bitmap Font - 0.0.8
+# TDD Ace Bitmap Font - 0.1.0
 # _____________________________________________________________________________
 #
 # + Author:   Galenmereth / Tor Damian Design
 # + E-mail:   post@tordamian.com
 # -----------------------------------------------------------------------------
-# + Last updated: 05/28/2015
+# + Last updated: 05/29/2015
 # + Level: Easy, Normal
 # + Requires: n/a
 # _____________________________________________________________________________
 #
 # ▼ Changelog
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
+# 0.1.0   Fixed spacing bug for single characters, reorganized parser system to
+#         support the new optional Image Font Parser.
+#
 # 0.0.8   Added ADJUST_HORIZONTAL_DRAW_POSITION setting.
 #
 # 0.0.7   Added ADJUST_VERTICAL_DRAW_POSITION setting.
@@ -120,7 +123,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "POPit"
+  DEFAULT_FONT = "bmf_example"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -

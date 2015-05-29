@@ -9,8 +9,9 @@ module Image_Font_Parser
     set_vars(bitmap)
     parse_line_starts(bitmap)
     parse_bitmap(bitmap)
-    #@@char_data.each{|cd| puts "Character #{cd.id.chr}: x:#{cd.x}, y:#{cd.y}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
-    return info(font_image), parse_char_data, kerning, File.basename(font_image)
+    parse_char_data
+    @@char_data.each{|cd| puts "Character #{cd.id.chr}: x:#{cd.x}, y:#{cd.y}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
+    return info(font_image), @@char_data, kerning, File.basename(font_image)
   end
 
   def parse_line_starts(bitmap)
@@ -55,8 +56,6 @@ module Image_Font_Parser
       cd.x_offset = 0
       cd.y_offset = get_y_offset(cd)
     end
-
-    @@char_data
   end
 
   def get_y_offset(char_data)
@@ -91,14 +90,20 @@ module Image_Font_Parser
     # Local vars store
     x = y = 0
 
-    # Get width
-    x += 1 while is_valid_char_outline?(ox + x, oy, bitmap)
-    data.width = x - 2 # We ignore the first and last pixel as that's the outline
-    data.x_advance = data.width + get_x_advance_for(ox + x, oy, bitmap)
-
     # Get height
-    y += 1 while is_valid_char_outline?(ox, oy + y, bitmap)
-    data.height = y - 2 # Like width
+    data.height = 0
+    data.height += 1 while is_valid_char_outline?(ox, oy + data.height, bitmap)
+    data.height -= 2 # Like width
+
+    # Get width
+    data.width = 0
+    data.width += 1 while is_valid_char_outline?(ox + data.width, oy, bitmap)
+    data.width -= 2 # We ignore the first and last pixel as that's the outline
+    
+    data.x_advance = 0
+    data.x_advance += 1 while is_valid_char_spacing?(ox + 1 + data.x_advance, oy + data.height + 1, bitmap)
+    data.x_advance = data.width if data.x_advance <= 1
+    puts "data.x_advance: #{data.x_advance} | #{oy} / #{oy + data.height + 1}"
 
     store = (@@stored_control_data << StoredDim.new).last
     store.xr = ox..(ox + data.width + 1)
