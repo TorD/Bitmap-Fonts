@@ -928,10 +928,10 @@ module Image_Font_Parser
     data.width += 1 while is_valid_char_outline?(ox + data.width, oy, bitmap)
     data.width -= 2 # We ignore the first and last pixel as that's the outline
     
+    # Get x_advance
     data.x_advance = 0
     data.x_advance += 1 while is_valid_char_spacing?(ox + 1 + data.x_advance, oy + data.height + 1, bitmap)
     data.x_advance = data.width if data.x_advance <= 1
-    puts "data.x_advance: #{data.x_advance} | #{oy} / #{oy + data.height + 1}"
 
     store = (@@stored_control_data << StoredDim.new).last
     store.xr = ox..(ox + data.width + 1)
