@@ -7,62 +7,23 @@
 module TDD
 module ABF
 class Char_Data
+  attr_accessor :id
+  attr_accessor :x
+  attr_accessor :y
+  attr_accessor :width
+  attr_accessor :height
+  attr_accessor :x_offset
+  attr_accessor :y_offset
+  attr_accessor :x_advance
   #--------------------------------------------------------------------------
   # * Initializer
   # > data_hash: Expects a standardized bitmap font data hash. See
   #              TDD::ABF::Standard_Font_Parser
   #--------------------------------------------------------------------------
-  def initialize(data_hash)
-    @data = data_hash
-  end
-  #--------------------------------------------------------------------------
-  # * Get Character Id
-  #--------------------------------------------------------------------------
-  def id
-    @data[:id]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap x position of character
-  #--------------------------------------------------------------------------
-  def x
-    @data[:x]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap y position of character
-  #--------------------------------------------------------------------------
-  def y
-    @data[:y]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap width of character
-  #--------------------------------------------------------------------------
-  def width
-    @data[:width]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap height of character
-  #--------------------------------------------------------------------------
-  def height
-    @data[:height]
-  end
-  #--------------------------------------------------------------------------
-  # * Get drawing x offset
-  #--------------------------------------------------------------------------
-  def x_offset
-    @data[:xoffset]
-  end
-  #--------------------------------------------------------------------------
-  # * Get drawing y offset
-  #--------------------------------------------------------------------------
-  def y_offset
-    @data[:yoffset]
-  end
-  #--------------------------------------------------------------------------
-  # * Get x advance, the amount of pixels until the next character's drawing
-  #   point
-  #--------------------------------------------------------------------------
-  def x_advance
-    @data[:xadvance]
+  def initialize(data_hash={})
+    data_hash.each do |key, val|
+      instance_variable_set("@#{key}", val)
+    end
   end
 end
 end

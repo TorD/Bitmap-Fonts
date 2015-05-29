@@ -11,8 +11,8 @@ module Font_Database
   # * Load font
   # > font_data_file: The font data file to read
   #--------------------------------------------------------------------------
-  def load_font(font_data_file)
-    font = TDD::ABF::Bitmap_Font.new(font_data_file)
+  def load_font(font_data_file, parser=nil)
+    font = TDD::ABF::Bitmap_Font.new(font_data_file, parser)
     fonts[font.name] = font
     return font
   end

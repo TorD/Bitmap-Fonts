@@ -18,6 +18,7 @@ module General_Helper
       str.to_s.each_char do |char|
         char_data = font.char_data_for(char)
         next unless char_data
+        puts "calculate_text_width: #{font.letter_spacing[0]}, #{char_data.x_offset}, #{char_data.x_advance}"
         text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
         text_width += font.kerning(last_char, char) if last_char
         last_char = char

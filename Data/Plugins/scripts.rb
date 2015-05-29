@@ -121,7 +121,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "POPit"
+  DEFAULT_FONT = "bmf_example"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -257,7 +257,8 @@ class Bitmap_Font
   # > font_data: The data (String) to read
   # > parser: The parser method to use to retrieve data
   #--------------------------------------------------------------------------
-  def initialize(font_data, parser = TDD::ABF::Standard_Font_Parser)
+  def initialize(font_data, parser)
+    parser ||= TDD::ABF::Standard_Font_Parser
     @info, @char_data, @kerning_data, @file = parser.parse(font_data)
   end
   #--------------------------------------------------------------------------
@@ -371,62 +372,23 @@ end
 module TDD
 module ABF
 class Char_Data
+  attr_accessor :id
+  attr_accessor :x
+  attr_accessor :y
+  attr_accessor :width
+  attr_accessor :height
+  attr_accessor :x_offset
+  attr_accessor :y_offset
+  attr_accessor :x_advance
   #--------------------------------------------------------------------------
   # * Initializer
   # > data_hash: Expects a standardized bitmap font data hash. See
   #              TDD::ABF::Standard_Font_Parser
   #--------------------------------------------------------------------------
-  def initialize(data_hash)
-    @data = data_hash
-  end
-  #--------------------------------------------------------------------------
-  # * Get Character Id
-  #--------------------------------------------------------------------------
-  def id
-    @data[:id]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap x position of character
-  #--------------------------------------------------------------------------
-  def x
-    @data[:x]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap y position of character
-  #--------------------------------------------------------------------------
-  def y
-    @data[:y]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap width of character
-  #--------------------------------------------------------------------------
-  def width
-    @data[:width]
-  end
-  #--------------------------------------------------------------------------
-  # * Get bitmap height of character
-  #--------------------------------------------------------------------------
-  def height
-    @data[:height]
-  end
-  #--------------------------------------------------------------------------
-  # * Get drawing x offset
-  #--------------------------------------------------------------------------
-  def x_offset
-    @data[:xoffset]
-  end
-  #--------------------------------------------------------------------------
-  # * Get drawing y offset
-  #--------------------------------------------------------------------------
-  def y_offset
-    @data[:yoffset]
-  end
-  #--------------------------------------------------------------------------
-  # * Get x advance, the amount of pixels until the next character's drawing
-  #   point
-  #--------------------------------------------------------------------------
-  def x_advance
-    @data[:xadvance]
+  def initialize(data_hash={})
+    data_hash.each do |key, val|
+      instance_variable_set("@#{key}", val)
+    end
   end
 end
 end
@@ -444,8 +406,8 @@ module Font_Database
   # * Load font
   # > font_data_file: The font data file to read
   #--------------------------------------------------------------------------
-  def load_font(font_data_file)
-    font = TDD::ABF::Bitmap_Font.new(font_data_file)
+  def load_font(font_data_file, parser=nil)
+    font = TDD::ABF::Bitmap_Font.new(font_data_file, parser)
     fonts[font.name] = font
     return font
   end
@@ -498,6 +460,7 @@ module General_Helper
       str.to_s.each_char do |char|
         char_data = font.char_data_for(char)
         next unless char_data
+        puts "calculate_text_width: #{font.letter_spacing[0]}, #{char_data.x_offset}, #{char_data.x_advance}"
         text_width += font.letter_spacing[0] + char_data.x_offset + char_data.x_advance
         text_width += font.kerning(last_char, char) if last_char
         last_char = char
@@ -729,7 +692,8 @@ module Standard_Font_Parser
   # * Parse font xml
   # = (Hash) Font Info, (Hash) Font Character Data, (Hash) Font Kerning Data, (String) Font File
   #--------------------------------------------------------------------------
-  def parse(xml_string)
+  def parse(file)
+    xml_string = open(file, "r").read.to_s
     return parse_fnt_xml_info(xml_string), parse_fnt_xml_char_data(xml_string), parse_fnt_xml_kerning_data(xml_string), parse_fnt_xml_file(xml_string)
   end
   #--------------------------------------------------------------------------
@@ -773,16 +737,16 @@ module Standard_Font_Parser
     result = []
     xml_string.scan(/<char id="(.*)" x="(.*)" y="(.*)" width="(.*)" height="(.*)" xoffset="(.*)" yoffset="(.*)" xadvance="(.*)" page="(.*)" chnl="(.*)"\/>/) do |m|
       result << TDD::ABF::Char_Data.new({
-        :id       => m[0].to_i,
-        :x        => m[1].to_f,
-        :y        => m[2].to_f,
-        :width    => m[3].to_f,
-        :height   => m[4].to_f,
-        :xoffset  => m[5].to_f,
-        :yoffset  => m[6].to_f,
-        :xadvance => m[7].to_f,
-        :page     => m[8].to_f,
-        :chnl     => m[9].to_f
+        :id        => m[0].to_i,
+        :x         => m[1].to_f,
+        :y         => m[2].to_f,
+        :width     => m[3].to_f,
+        :height    => m[4].to_f,
+        :x_offset  => m[5].to_f,
+        :y_offset  => m[6].to_f,
+        :x_advance => m[7].to_f,
+        :page      => m[8].to_f,
+        :chnl      => m[9].to_f
       })
     end
     result
@@ -839,21 +803,166 @@ end
 
 # Load all font files
 Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.fnt") do |file|
-  font = TDD::ABF::Font_Database.load_font(open(file, "r").read.to_s)
+  font = TDD::ABF::Font_Database.load_font(file)
   #font = TDD::ABF::Font_Database.load_font(load_data(file))
   puts "> Loading font \"#{font.name}\" (#{file})" if TDD::ABF::SETTINGS::DEBUG_MODE
 end
-
-# Control settings
-if TDD::ABF::SETTINGS::DEFAULT_FONT && !TDD::ABF::Font_Database.has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)
-  raise "TDD Ace Bitmap Fonts: Cannot find font face #{TDD::ABF::SETTINGS::DEFAULT_FONT} in folder #{TDD::ABF::SETTINGS::FOLDER}; are you sure it's there?"
+module TDD
+module ABF
+module Image_Font_Parser
+module SETTINGS
+  FONT_CONFIGS = {# Don't edit this
+    "bmf_example" => {
+      :size       => 36,         # The font size
+      :base       => 20,         # The base of the font
+      :lineHeight => 20,         # Distance between each line
+      :padding    => [2,2,2,2],  # Padding top, right, bottom, left
+      :spacing    => [0,0],      # Extra letter spacing, x,y
+    }
+  }# Don't edit this
+end
+end
+end
 end
 module TDD
 module ABF
 module Image_Font_Parser
   module_function
+  StoredDim = Struct.new :xr, :yr
+
   def parse(font_image)
-    
+    bitmap = Cache.load_bitmap('', font_image)
+    set_vars(bitmap)
+    parse_line_starts(bitmap)
+    parse_bitmap(bitmap)
+    #@@char_data.each{|cd| puts "Character #{cd.id.chr}: x:#{cd.x}, y:#{cd.y}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
+    return info(font_image), parse_char_data, kerning, File.basename(font_image)
+  end
+
+  def parse_line_starts(bitmap)
+    bitmap.height.times do |y|
+      next if y < 3 # Config pixels
+      @@line_starts << y if is_line_start?(0, y, bitmap)
+    end
+  end
+
+  def parse_bitmap(bitmap)
+    bitmap.width.times do |x|
+      bitmap.height.times do |y|
+        next if x == 0 && y < 3 # First three pixels are configuration pixels
+        store_dimension_data(x, y, bitmap) if is_valid_char_outline?(x, y, bitmap) && !already_stored?(x, y)
+      end
+    end
+  end
+
+  def info(font_image)
+    font_name = File.basename(font_image.gsub(".bft", ""), ".*")
+    {
+      :face => font_name,
+    }.merge(TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name])
+  end
+
+  def kerning
+    []
+  end
+
+  # Parses the char data file
+  def parse_char_data
+    sorted_char_data = []
+    @@char_data.sort_by!{|cd| cd.y + cd.height}.each_slice(characters_per_row) do |row_data|
+      row_data.sort_by!{|rd| rd.x}.each do |rd|
+        sorted_char_data << rd
+      end
+    end
+    @@char_data = sorted_char_data
+
+    @@char_data.each_with_index.map do |cd, n|
+      cd.id = get_character_at(n).ord
+      cd.x_offset = 0
+      cd.y_offset = get_y_offset(cd)
+    end
+
+    @@char_data
+  end
+
+  def get_y_offset(char_data)
+    char_data.y - @@line_starts.select{|y| y <= char_data.y}.first
+  end
+
+  def is_valid_char_outline?(x, y, bitmap)
+    bitmap.get_pixel(x, y) === @@char_dimensions_color
+  end
+
+  def is_valid_char_spacing?(x, y, bitmap)
+    bitmap.get_pixel(x, y) === @@char_x_advance_color
+  end
+
+  def is_line_start?(x, y, bitmap)
+    bitmap.get_pixel(x, y) === @@char_line_start_color
+  end
+
+  def already_stored?(x, y)
+    # Now we check if coordinate is already stored
+    @@stored_control_data.select do |sd|
+      sd.xr.include?(x) && sd.yr.include?(y)
+    end.any?
+  end
+
+  # Starts at top left of a character
+  def store_dimension_data(ox, oy, bitmap)
+    data = (@@char_data << TDD::ABF::Char_Data.new).last
+    data.x = ox + 1 # +1 to ignore first pixel
+    data.y = oy + 1 # ^
+
+    # Local vars store
+    x = y = 0
+
+    # Get width
+    x += 1 while is_valid_char_outline?(ox + x, oy, bitmap)
+    data.width = x - 2 # We ignore the first and last pixel as that's the outline
+    data.x_advance = data.width + get_x_advance_for(ox + x, oy, bitmap)
+
+    # Get height
+    y += 1 while is_valid_char_outline?(ox, oy + y, bitmap)
+    data.height = y - 2 # Like width
+
+    store = (@@stored_control_data << StoredDim.new).last
+    store.xr = ox..(ox + data.width + 1)
+    store.yr = oy..(oy + data.height + 1)
+  end
+
+  def get_x_advance_for(ox, oy, bitmap)
+    x = 0
+    x += 1 while is_valid_char_spacing?(ox + x, oy, bitmap)
+    x
+  end
+
+  def set_vars(bitmap)
+    @@char_dimensions_color = bitmap.get_pixel(0,0)
+    @@char_x_advance_color  = bitmap.get_pixel(0,1)
+    @@char_line_start_color = bitmap.get_pixel(0,2)
+    @@char_data             = []
+    @@line_starts           = []
+    @@stored_control_data   = []
+  end
+
+  def character_map
+    default_characer_map
+  end
+
+  def characters_per_row
+    character_map.first.size
+  end
+
+  def get_character_at(index)
+    character_map[index / characters_per_row][index % characters_per_row]
+  end
+
+  def default_characer_map
+    [
+      %w[a b c d e f g],
+      %w[h i j k l m n],
+    ]
   end
 end
 end
@@ -867,4 +976,15 @@ if TDD::ABF::SETTINGS::DEBUG_MODE
   puts "================================================="
   puts "TDD Ace Bitmap Fonts - Image Font .bft.png Parser"
   puts "================================================="
+end
+
+# Load all font files
+Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.bft.{jpg,png,bmp}") do |file|
+  puts "> Reading bft file: (#{file}) | Please wait..." if TDD::ABF::SETTINGS::DEBUG_MODE
+  font = TDD::ABF::Font_Database.load_font(file, TDD::ABF::Image_Font_Parser)
+  #font = TDD::ABF::Font_Database.load_font(load_data(file))
+end
+# Control settings
+if TDD::ABF::SETTINGS::DEFAULT_FONT && !TDD::ABF::Font_Database.has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)
+  raise "TDD Ace Bitmap Fonts: Cannot find font face #{TDD::ABF::SETTINGS::DEFAULT_FONT} in folder #{TDD::ABF::SETTINGS::FOLDER}; are you sure it's there?"
 end

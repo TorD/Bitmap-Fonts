@@ -11,7 +11,8 @@ module Standard_Font_Parser
   # * Parse font xml
   # = (Hash) Font Info, (Hash) Font Character Data, (Hash) Font Kerning Data, (String) Font File
   #--------------------------------------------------------------------------
-  def parse(xml_string)
+  def parse(file)
+    xml_string = open(file, "r").read.to_s
     return parse_fnt_xml_info(xml_string), parse_fnt_xml_char_data(xml_string), parse_fnt_xml_kerning_data(xml_string), parse_fnt_xml_file(xml_string)
   end
   #--------------------------------------------------------------------------
@@ -55,16 +56,16 @@ module Standard_Font_Parser
     result = []
     xml_string.scan(/<char id="(.*)" x="(.*)" y="(.*)" width="(.*)" height="(.*)" xoffset="(.*)" yoffset="(.*)" xadvance="(.*)" page="(.*)" chnl="(.*)"\/>/) do |m|
       result << TDD::ABF::Char_Data.new({
-        :id       => m[0].to_i,
-        :x        => m[1].to_f,
-        :y        => m[2].to_f,
-        :width    => m[3].to_f,
-        :height   => m[4].to_f,
-        :xoffset  => m[5].to_f,
-        :yoffset  => m[6].to_f,
-        :xadvance => m[7].to_f,
-        :page     => m[8].to_f,
-        :chnl     => m[9].to_f
+        :id        => m[0].to_i,
+        :x         => m[1].to_f,
+        :y         => m[2].to_f,
+        :width     => m[3].to_f,
+        :height    => m[4].to_f,
+        :x_offset  => m[5].to_f,
+        :y_offset  => m[6].to_f,
+        :x_advance => m[7].to_f,
+        :page      => m[8].to_f,
+        :chnl      => m[9].to_f
       })
     end
     result

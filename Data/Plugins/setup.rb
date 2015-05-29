@@ -10,9 +10,10 @@ plugins = {
         order: [:rest, "load"]
       },
       "Image Font Parser" => {
-        order: [:rest, "load"]
+        order: ["Settings", :rest, "load"]
       }
     },
+    "Control Settings" => {}
   }
 }
 

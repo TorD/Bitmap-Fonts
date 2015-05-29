@@ -1,6 +1,12 @@
-(eval):250:in `calc_size': undefined local variable or method `arr' for #<TDD::ABF::Bitmap_Font:0xdf45b34>, NameError
-	from (eval):625:in `draw_bitmap_text'
-	from (eval):597:in `draw_text'
+Cache:106:in `initialize': No such file or directory - BitmapFonts/BitmapFonts/bmf_example.bft.PNG, Errno::ENOENT
+	from Cache:106:in `new'
+	from Cache:106:in `normal_bitmap'
+	from Cache:91:in `load_bitmap'
+	from (eval):644:in `bitmap_font'
+	from (eval):590:in `block in draw_bitmap_text'
+	from (eval):577:in `each_char'
+	from (eval):577:in `draw_bitmap_text'
+	from (eval):541:in `draw_text'
 	from Scene_Title:61:in `draw_game_title'
 	from Scene_Title:53:in `create_foreground'
 	from Scene_Title:16:in `start'

@@ -11,7 +11,8 @@ class Bitmap_Font
   # > font_data: The data (String) to read
   # > parser: The parser method to use to retrieve data
   #--------------------------------------------------------------------------
-  def initialize(font_data, parser = TDD::ABF::Standard_Font_Parser)
+  def initialize(font_data, parser)
+    parser ||= TDD::ABF::Standard_Font_Parser
     @info, @char_data, @kerning_data, @file = parser.parse(font_data)
   end
   #--------------------------------------------------------------------------
