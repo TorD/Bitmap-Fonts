@@ -12,7 +12,7 @@ class Parser
   def initialize(font_image)
     @font_image = font_image
     if TDD::ABF::SETTINGS::DEBUG_MODE
-      finalized_char_data.each{|cd| puts "Character #{cd.id.chr} found: x:#{cd.x}, y:#{cd.y}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
+      finalized_char_data.each{|cd| puts "Character #{cd.id.chr} found: x:#{cd.x}, y:#{cd.y}, y_offset:#{cd.y_offset}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
     end
   end
 
@@ -37,6 +37,17 @@ class Parser
       next if y < 1 # Config pixels
       y if is_baseline?(0, y)
     end.compact
+  end
+
+  def line_starts
+    return @line_starts if @line_starts
+    max_height = char_data.map do |cd| # Char height with baseline subtracted
+      bl = baselines.select{|b| cd.yr.include?(b)}.first
+      cd.height - ((cd.height + cd.y) - bl) # Subtract char below baseline
+    end.max
+    baselines.map do |bl|
+      bl - max_height
+    end
   end
 
   def char_data
@@ -71,21 +82,35 @@ class Parser
       cd
     end.compact.reject!{|cd| cd.id.nil?}
 
+    @finalized_char_data << space_char
+
     @finalized_char_data
   end
 
   def info
     {
       :face => font_name,
-    }.merge(TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name])
+  end
+
+  def settings
+    TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name]
   end
 
   def kerning
-    []
+    kerning = settings[:kerning]
+    return [] unless kerning
+    kerning.map do |kern_chars, value|
+      Kerning_Data.new({
+        :first  => kern_chars.first.ord,
+        :second => kern_chars.last.ord,
+        :amount => value
+      })
+    end
   end
 
   def get_y_offset(char_data)
-    char_data.y - baselines.select{|y| y <= char_data.y}.first
+    puts "get_y_offset: #{line_starts.select{|y| y <= char_data.y}.last}"
+    char_data.y - line_starts.select{|y| y <= char_data.y}.last
   end
 
   def is_valid_char_outline?(x, y)
@@ -139,10 +164,23 @@ class Parser
     data
   end
 
-  def get_x_advance_for(ox, oy)
-    x = 0
-    x += 1 while is_valid_char_spacing?(ox + x, oy)
-    x
+  def space_char
+    data = TDD::ABF::Char_Data.new
+    data.x = -1
+    data.y = -1
+
+    data.height = 0
+    data.width = space_size
+
+    data.x_advance = space_size
+    data.x_offset = data.y_offset = 0
+    data.id = 32
+
+    data
+  end
+
+  def space_size
+    settings[:space] || 10
   end
 
   def char_dimensions_color
