@@ -210,6 +210,7 @@ module SETTINGS
   ADJUST_VERTICAL_DRAW_POSITION = {# Don't edit this
   # Add new adjustments below; remember to end each line with a comma (,)
     "POPit"     => 4,
+  #  "bmf_example" => -10,
   # "font name" => 5,
   }# Don't edit this
 
@@ -228,17 +229,6 @@ module SETTINGS
     "POPit"     => 3,
   # "font name" => 5,
   }# Don't edit this
-
-  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  # - Font File Parser - NOT YET DONE
-  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  # The parser to use for font files. More parsers might be added later by me,
-  # you or other scripters; this facilitates an easier way of enabling them.
-  #
-  # OPTIONS:
-  #   :default  (standard bitmap font .fnt files with an XML document structure)
-  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  FONT_FILE_PARSER = :default
 
   #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   # - End Of Configuration -

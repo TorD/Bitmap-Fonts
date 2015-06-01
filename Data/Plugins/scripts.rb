@@ -211,6 +211,7 @@ module SETTINGS
   ADJUST_VERTICAL_DRAW_POSITION = {# Don't edit this
   # Add new adjustments below; remember to end each line with a comma (,)
     "POPit"     => 4,
+  #  "bmf_example" => -10,
   # "font name" => 5,
   }# Don't edit this
 
@@ -229,17 +230,6 @@ module SETTINGS
     "POPit"     => 3,
   # "font name" => 5,
   }# Don't edit this
-
-  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  # - Font File Parser - NOT YET DONE
-  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  # The parser to use for font files. More parsers might be added later by me,
-  # you or other scripters; this facilitates an easier way of enabling them.
-  #
-  # OPTIONS:
-  #   :default  (standard bitmap font .fnt files with an XML document structure)
-  #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  FONT_FILE_PARSER = :default
 
   #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   # - End Of Configuration -
@@ -816,16 +806,69 @@ module ABF
 module Image_Font_Parser
 module SETTINGS
   FONT_CONFIGS = {# Don't edit this
-    "bmf_example" => {
-      :size       => 36,         # The font size
-      :base       => 20,         # The base of the font
+    "bmf_examples" => {
+      # ------------------------------------------------------------------------
+      # Size
+      # ====
+      # OPTIONAL: The size of the font, in pixels.
+      # Default: Automatically retrieved from the largest letter (without stem)
+      #          in the image file.
+      # ------------------------------------------------------------------------
+      :size       => 36,
+      # ------------------------------------------------------------------------
+      # Base
+      # ====
+      # OPTIONAL: The base size of the font, in pixels.
+      # Default: Automatically retrieved from the smallest letter (without stem)
+      #          in the image file.
+      # ------------------------------------------------------------------------
+      :base       => 10,
+      # ------------------------------------------------------------------------
+      # Space
+      # =====
+      # OPTIONAL: The size of spaces in sentences, in pixels.
+      # Default: 10 pixels
+      # ------------------------------------------------------------------------
       :space      => 16,         # The width of a space / blank character
-      :lineHeight => 20,         # Distance between each line
-      :padding    => [2,2,2,2],  # Padding top, right, bottom, left
+      # ------------------------------------------------------------------------
+      # Line Height
+      # ===========
+      # OPTIONAL: Distance between each line of text, in pixels.
+      # Default: Automatically retrieved from the largest letter (without stem)
+      #          in the image file.
+      # ------------------------------------------------------------------------
+      :lineHeight => 36,
+      # ------------------------------------------------------------------------
+      # Padding
+      # =======
+      # OPTIONAL: Padding of text drawing, as array [top, right, bottom, left]
+      #           of pixels.
+      # Default: [0, 0, 0, 0]
+      # ------------------------------------------------------------------------
+      :padding    => [2,2,2,2],
+      # ------------------------------------------------------------------------
+      # Spacing
+      # =======
+      # OPTIONAL: Extra letter spacing when drawing, as array [x, y]
+      # Default: [0, 0]
+      # ------------------------------------------------------------------------
       :spacing    => [0,0],      # Extra letter spacing, x,y
-      :kerning    => {
-        ["i", "j"] => -8
-      }
+      # ------------------------------------------------------------------------
+      # Kerning
+      # =======
+      # OPTIONAL: Finetune spacing between two letters, as an array and value
+      #           ["a", "b"] => -5, where -5 is the amount you want to adjust
+      #           letter "b" when rendered after letter "a". In this example,
+      #           "b" would be drawn -5 pixels adjusted from "a", meaning 5
+      #           pixels closer than other letters.
+      # Default:  None
+      # ------------------------------------------------------------------------
+      :kerning    => {# Do not edit this
+      # Add new ; remember to end each line with a comma (,)
+      # ["a", "b"] => -5,
+        ["i", "j"] => -8,
+        ["a", "d"] => +5,
+      }# Do not edit this
     }
   }# Don't edit this
 end
@@ -874,14 +917,24 @@ class Parser
   end
 
   def line_starts
-    return @line_starts if @line_starts
-    max_height = char_data.map do |cd| # Char height with baseline subtracted
-      bl = baselines.select{|b| cd.yr.include?(b)}.first
-      cd.height - ((cd.height + cd.y) - bl) # Subtract char below baseline
-    end.max
-    baselines.map do |bl|
+    @line_starts ||= baselines.map do |bl|
       bl - max_height
     end
+  end
+
+  def char_heights
+    char_data.map do |cd| # Char height with baseline subtracted
+      bl = baselines.select{|b| cd.yr.include?(b)}.first
+      cd.height - ((cd.height + cd.y) - bl) # Subtract char below baseline
+    end
+  end
+
+  def max_height
+    char_heights.max
+  end
+
+  def min_height
+    char_heights.min
   end
 
   def char_data
@@ -922,13 +975,23 @@ class Parser
   end
 
   def info
-    {
-      :face => font_name,
-    }.merge(settings)
+    settings
   end
 
   def settings
-    TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name]
+    default_settings.merge(TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name] || {})
+  end
+
+  def default_settings
+    {
+      :face       => font_name,
+      :lineHeight => max_height,
+      :base       => min_height,
+      :padding    => [0,0,0,0],
+      :size       => max_height,
+      :spacing    => [0,0],
+      :kerning    => {}
+    }
   end
 
   def kerning
@@ -944,7 +1007,6 @@ class Parser
   end
 
   def get_y_offset(char_data)
-    puts "get_y_offset: #{line_starts.select{|y| y <= char_data.y}.last}"
     char_data.y - line_starts.select{|y| y <= char_data.y}.last
   end
 

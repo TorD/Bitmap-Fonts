@@ -40,14 +40,24 @@ class Parser
   end
 
   def line_starts
-    return @line_starts if @line_starts
-    max_height = char_data.map do |cd| # Char height with baseline subtracted
-      bl = baselines.select{|b| cd.yr.include?(b)}.first
-      cd.height - ((cd.height + cd.y) - bl) # Subtract char below baseline
-    end.max
-    baselines.map do |bl|
+    @line_starts ||= baselines.map do |bl|
       bl - max_height
     end
+  end
+
+  def char_heights
+    char_data.map do |cd| # Char height with baseline subtracted
+      bl = baselines.select{|b| cd.yr.include?(b)}.first
+      cd.height - ((cd.height + cd.y) - bl) # Subtract char below baseline
+    end
+  end
+
+  def max_height
+    char_heights.max
+  end
+
+  def min_height
+    char_heights.min
   end
 
   def char_data
@@ -88,12 +98,23 @@ class Parser
   end
 
   def info
-    {
-      :face => font_name,
+    settings
   end
 
   def settings
-    TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name]
+    default_settings.merge(TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name] || {})
+  end
+
+  def default_settings
+    {
+      :face       => font_name,
+      :lineHeight => max_height,
+      :base       => min_height,
+      :padding    => [0,0,0,0],
+      :size       => max_height,
+      :spacing    => [0,0],
+      :kerning    => {}
+    }
   end
 
   def kerning
@@ -109,7 +130,6 @@ class Parser
   end
 
   def get_y_offset(char_data)
-    puts "get_y_offset: #{line_starts.select{|y| y <= char_data.y}.last}"
     char_data.y - line_starts.select{|y| y <= char_data.y}.last
   end
 
