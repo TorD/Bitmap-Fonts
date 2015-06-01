@@ -10,6 +10,8 @@ class Char_Data
   attr_accessor :id
   attr_accessor :x
   attr_accessor :y
+  attr_accessor :xr         # X range, for image based parsers
+  attr_accessor :yr         # Y range, for image based parsers
   attr_accessor :width
   attr_accessor :height
   attr_accessor :x_offset

@@ -378,6 +378,8 @@ class Char_Data
   attr_accessor :id
   attr_accessor :x
   attr_accessor :y
+  attr_accessor :xr         # X range, for image based parsers
+  attr_accessor :yr         # Y range, for image based parsers
   attr_accessor :width
   attr_accessor :height
   attr_accessor :x_offset
@@ -829,37 +831,80 @@ end
 module TDD
 module ABF
 module Image_Font_Parser
-  module_function
+class Parser
   StoredDim = Struct.new :xr, :yr
 
-  def parse(font_image)
-    bitmap = Cache.load_bitmap('', font_image)
-    set_vars(bitmap)
-    parse_line_starts(bitmap)
-    parse_bitmap(bitmap)
-    parse_char_data
-    @@char_data.each{|cd| puts "Character #{cd.id.chr}: x:#{cd.x}, y:#{cd.y}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
-    return info(font_image), @@char_data, kerning, File.basename(font_image)
+  def self.parse(font_image)
+    p = self.new(font_image)
+    return p.info, p.finalized_char_data, p.kerning, p.filename
   end
 
-  def parse_line_starts(bitmap)
-    bitmap.height.times do |y|
-      next if y < 1 # Config pixels
-      @@line_starts << y if is_line_start?(0, y, bitmap)
+  def initialize(font_image)
+    @font_image = font_image
+    if TDD::ABF::SETTINGS::DEBUG_MODE
+      finalized_char_data.each{|cd| puts "Character #{cd.id.chr} found: x:#{cd.x}, y:#{cd.y}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
     end
   end
 
-  def parse_bitmap(bitmap)
+  def filename
+    File.basename(font_image)
+  end
+
+  def font_name
+    File.basename(font_image.gsub(".bft", ""), ".*")
+  end
+
+  def bitmap
+    @bitmap ||= Cache.load_bitmap('', font_image)
+  end
+
+  def font_image
+    @font_image
+  end
+
+  def baselines
+    @baselines ||= bitmap.height.times.map do |y|
+      next if y < 1 # Config pixels
+      y if is_baseline?(0, y)
+    end.compact
+  end
+
+  def char_data
+    return @char_data if @char_data
+
+    @char_data = []
     bitmap.width.times do |x|
       bitmap.height.times do |y|
         next if x < 3 && y == 0 # First three pixels are configuration pixels
-        store_dimension_data(x, y, bitmap) if is_valid_char_outline?(x, y, bitmap) && !already_stored?(x, y)
+        @char_data << parse_char(x, y) if is_valid_char_outline?(x, y) && !already_stored?(x, y)
       end
     end
+
+    @char_data
   end
 
-  def info(font_image)
-    font_name = File.basename(font_image.gsub(".bft", ""), ".*")
+  def finalized_char_data
+    return @finalized_char_data if @finalized_char_data
+    @finalized_char_data = []
+    char_data.dup.sort_by!{|cd| cd.y + cd.height}.each_slice(characters_per_row) do |row_data|
+      row_data.sort_by!{|rd| rd.x}.each do |rd|
+        @finalized_char_data << rd
+      end
+    end
+
+    @finalized_char_data.each_with_index.map do |cd, n|
+      char = get_character_at(n)
+      next unless char
+      cd.id = char.ord
+      cd.x_offset = 0
+      cd.y_offset = get_y_offset(cd)
+      cd
+    end.compact.reject!{|cd| cd.id.nil?}
+
+    @finalized_char_data
+  end
+
+  def info
     {
       :face => font_name,
     }.merge(TDD::ABF::Image_Font_Parser::SETTINGS::FONT_CONFIGS[font_name])
@@ -869,49 +914,32 @@ module Image_Font_Parser
     []
   end
 
-  # Parses the char data file
-  def parse_char_data
-    sorted_char_data = []
-    @@char_data.sort_by!{|cd| cd.y + cd.height}.each_slice(characters_per_row) do |row_data|
-      row_data.sort_by!{|rd| rd.x}.each do |rd|
-        sorted_char_data << rd
-      end
-    end
-    @@char_data = sorted_char_data
-
-    @@char_data.each_with_index.map do |cd, n|
-      cd.id = get_character_at(n).ord
-      cd.x_offset = 0
-      cd.y_offset = get_y_offset(cd)
-    end
-  end
-
   def get_y_offset(char_data)
-    char_data.y - @@line_starts.select{|y| y <= char_data.y}.first
+    char_data.y - baselines.select{|y| y <= char_data.y}.first
   end
 
-  def is_valid_char_outline?(x, y, bitmap)
-    bitmap.get_pixel(x, y) === @@char_dimensions_color
+  def is_valid_char_outline?(x, y)
+    bitmap.get_pixel(x, y) === char_dimensions_color
   end
 
-  def is_valid_char_spacing?(x, y, bitmap)
-    bitmap.get_pixel(x, y) === @@char_x_advance_color
+  def is_valid_char_spacing?(x, y)
+    bitmap.get_pixel(x, y) === char_x_advance_color
   end
 
-  def is_line_start?(x, y, bitmap)
-    bitmap.get_pixel(x, y) === @@char_line_start_color
+  def is_baseline?(x, y)
+    bitmap.get_pixel(x, y) === char_baseline_color
   end
 
   def already_stored?(x, y)
     # Now we check if coordinate is already stored
-    @@stored_control_data.select do |sd|
-      sd.xr.include?(x) && sd.yr.include?(y)
+    char_data.select do |ds|
+      ds.xr.include?(x) && ds.yr.include?(y)
     end.any?
   end
 
   # Starts at top left of a character
-  def store_dimension_data(ox, oy, bitmap)
-    data = (@@char_data << TDD::ABF::Char_Data.new).last
+  def parse_char(ox, oy)
+    data = TDD::ABF::Char_Data.new
     data.x = ox + 1 # +1 to ignore first pixel
     data.y = oy + 1 # ^
 
@@ -920,37 +948,43 @@ module Image_Font_Parser
 
     # Get height
     data.height = 0
-    data.height += 1 while is_valid_char_outline?(ox, oy + data.height, bitmap)
+    data.height += 1 while is_valid_char_outline?(ox, oy + data.height)
     data.height -= 2 # Like width
 
     # Get width
     data.width = 0
-    data.width += 1 while is_valid_char_outline?(ox + data.width, oy, bitmap)
+    data.width += 1 while is_valid_char_outline?(ox + data.width, oy)
     data.width -= 2 # We ignore the first and last pixel as that's the outline
     
     # Get x_advance
     data.x_advance = 0
-    data.x_advance += 1 while is_valid_char_spacing?(ox + 1 + data.x_advance, oy + data.height + 1, bitmap)
+    data.x_advance += 1 while is_valid_char_spacing?(ox + 1 + data.x_advance, oy + data.height + 1)
     data.x_advance = data.width if data.x_advance <= 1
 
-    store = (@@stored_control_data << StoredDim.new).last
-    store.xr = ox..(ox + data.width + 1)
-    store.yr = oy..(oy + data.height + 1)
+    # Dimensional range data
+    data.xr = ox..(ox + data.width + 1)
+    data.yr = oy..(oy + data.height + 1)
+
+    # Return data
+    data
   end
 
-  def get_x_advance_for(ox, oy, bitmap)
+  def get_x_advance_for(ox, oy)
     x = 0
-    x += 1 while is_valid_char_spacing?(ox + x, oy, bitmap)
+    x += 1 while is_valid_char_spacing?(ox + x, oy)
     x
   end
 
-  def set_vars(bitmap)
-    @@char_dimensions_color = bitmap.get_pixel(0,0)
-    @@char_x_advance_color  = bitmap.get_pixel(1,0)
-    @@char_line_start_color = bitmap.get_pixel(2,0)
-    @@char_data             = []
-    @@line_starts           = []
-    @@stored_control_data   = []
+  def char_dimensions_color
+    @char_dimensions_color ||= bitmap.get_pixel(0,0)
+  end
+
+  def char_x_advance_color
+    @char_x_advance_color ||= bitmap.get_pixel(1,0)
+  end
+
+  def char_baseline_color
+    @char_baseline_color ||= bitmap.get_pixel(2,0)
   end
 
   def character_map
@@ -962,7 +996,9 @@ module Image_Font_Parser
   end
 
   def get_character_at(index)
-    character_map[index / characters_per_row][index % characters_per_row]
+    row_data = character_map[index / characters_per_row]
+    return nil unless row_data
+    return row_data[index % characters_per_row]
   end
 
   def default_characer_map
@@ -971,6 +1007,7 @@ module Image_Font_Parser
       %w[h i j k l m n],
     ]
   end
+end
 end
 end
 end
@@ -988,7 +1025,7 @@ end
 # Load all font files
 Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.bft.{jpg,png,bmp}") do |file|
   puts "> Reading bft file: \"#{file}\" | Please wait..." if TDD::ABF::SETTINGS::DEBUG_MODE
-  font = TDD::ABF::Font_Database.load_font(file, TDD::ABF::Image_Font_Parser)
+  font = TDD::ABF::Font_Database.load_font(file, TDD::ABF::Image_Font_Parser::Parser)
   puts ">> Font loaded as: \"#{font.name}\"" if TDD::ABF::SETTINGS::DEBUG_MODE
 end
 # Control settings
