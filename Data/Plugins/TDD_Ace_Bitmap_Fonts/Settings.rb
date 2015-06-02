@@ -1,6 +1,7 @@
+($imported ||= {})["TDD Ace Bitmap Font - Core"] = "0.1.0"
 #==============================================================================
 #
-# TDD Ace Bitmap Font - 0.1.0
+# TDD Ace Bitmap Font - Core - 0.1.0
 # _____________________________________________________________________________
 #
 # + Author:   Galenmereth / Tor Damian Design
@@ -79,9 +80,14 @@
 #==============================================================================
 # ▼ License
 # -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-# Free for non-commercial and commercial use. Please credit Tor Damian Design.
-# You are free to share script freely with everyone, but please retain this
-# description and license. Thank you.
+# Free for non-commercial use. For commercial use, please contact the author
+# at post@tordamian.com to purchase a commercial license; one license is for
+# one project. You only need to acquire the license the moment you start
+# selling your game, so feel free to try the script out for as long as you want
+# until you are satisified and certain about acquiring a license.
+# 
+# Please credit Tor Damian Design. Only share links to this script provided by
+# the author; do not mirror it.
 #==============================================================================
 module TDD
 module ABF

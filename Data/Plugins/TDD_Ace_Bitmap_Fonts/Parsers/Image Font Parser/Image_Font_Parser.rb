@@ -1,3 +1,8 @@
+#==============================================================================
+# ** Module TDD::ABF::Image_Font_Parser
+#------------------------------------------------------------------------------
+#  This module is used to parse .tbf image files as bitmap fonts
+#==============================================================================
 module TDD
 module ABF
 module Image_Font_Parser
