@@ -124,7 +124,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "bmf_example"
+  DEFAULT_FONT = "bmf_examples"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -1180,7 +1180,7 @@ module USER_ASSISTANCE
   def font_there_question(font_name)
     matches = lazy_match_font(font_name)
     if matches.any?
-      "did you mean \"#{matches.join(", ")}\"?"
+      "did you mean \"#{matches.join("\" or \"")}\"?"
     else
       "are you sure it's there?"
     end
