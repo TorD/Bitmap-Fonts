@@ -12,7 +12,7 @@ class Parser
   def initialize(font_image)
     @font_image = font_image
     if TDD::ABF::SETTINGS::DEBUG_MODE
-      finalized_char_data.each{|cd| puts "Character #{cd.id.chr} found: x:#{cd.x}, y:#{cd.y}, y_offset:#{cd.y_offset}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
+      finalized_char_data.each{|cd| puts "Character #{cd.id.chr} found: x:#{cd.x}, y:#{cd.y}, x_offset:#{cd.x_offset}, y_offset:#{cd.y_offset}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
     end
   end
 
@@ -48,8 +48,9 @@ class Parser
   def char_heights
     char_data.map do |cd| # Char height with baseline subtracted
       bl = baselines.select{|b| cd.yr.include?(b)}.first
+      next unless bl
       cd.height - ((cd.height + cd.y) - bl) # Subtract char below baseline
-    end
+    end.compact
   end
 
   def max_height
@@ -87,8 +88,8 @@ class Parser
       char = get_character_at(n)
       next unless char
       cd.id = char.ord
-      cd.x_offset = 0
-      cd.y_offset = get_y_offset(cd)
+      cd.x_offset ||= 0
+      cd.y_offset ||= get_y_offset(cd)
       cd
     end.compact.reject!{|cd| cd.id.nil?}
 
@@ -171,9 +172,20 @@ class Parser
     data.width += 1 while is_valid_char_outline?(ox + data.width, oy)
     data.width -= 2 # We ignore the first and last pixel as that's the outline
     
-    # Get x_advance
-    data.x_advance = 0
-    data.x_advance += 1 while is_valid_char_spacing?(ox + 1 + data.x_advance, oy + data.height + 1)
+    # Get x_advance and x_offset
+    data.x_advance = 0.0
+    data.x_offset = 0.0
+    data.width.times do |n|
+      x = ox + 1 + n
+      y = oy + data.height + 1
+      if is_valid_char_spacing?(x, y)
+        data.x_advance += 1
+      elsif is_valid_char_outline?(x, y) && data.x_advance == 0
+        data.x_offset -= 1
+      end
+    end
+    data.x_offset = 0 if data.x_advance == 0
+    data.x_advance += data.x_offset.abs
     data.x_advance = data.width if data.x_advance <= 1
 
     # Dimensional range data
@@ -186,8 +198,7 @@ class Parser
 
   def space_char
     data = TDD::ABF::Char_Data.new
-    data.x = -1
-    data.y = -1
+    data.x = data.y = 0
 
     data.height = 0
     data.width = space_size
@@ -220,20 +231,29 @@ class Parser
   end
 
   def characters_per_row
-    character_map.first.size
+    settings[:per_row] || default_characer_map
+  end
+
+  def default_characters_per_row
+    if character_map.first.is_a? Array
+      character_map.first.size
+    else
+      character_map.size
+    end
   end
 
   def get_character_at(index)
-    row_data = character_map[index / characters_per_row]
-    return nil unless row_data
-    return row_data[index % characters_per_row]
+    if character_map.first.is_a? Array
+      row_data = character_map[index / characters_per_row]
+      return nil unless row_data
+      return row_data[index % characters_per_row]
+    else
+      character_map[index]
+    end
   end
 
   def default_characer_map
-    [
-      %w[a b c d e f g],
-      %w[h i j k l m n],
-    ]
+    %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
   end
 end
 end
