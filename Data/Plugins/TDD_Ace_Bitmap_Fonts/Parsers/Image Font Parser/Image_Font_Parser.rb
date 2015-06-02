@@ -248,9 +248,6 @@ class Parser
         total += row.size
         row[index - total] if total > index
       end.compact.first
-      #row_data = character_map[index / characters_per_row]
-      #return nil unless row_data
-      #return row_data[index % characters_per_row]
     else
       character_map[index]
     end
