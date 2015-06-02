@@ -15,11 +15,11 @@ module USER_ASSISTANCE
     TDD::ABF::SETTINGS::DEBUG_MODE ? "• Please look in the console for a list of all loaded fonts and their font face names." : "• Enable debug mode: To see a list of all fonts loaded by the script, as well as their font face names, set \"DEBUG_MODE = true\" in the script settings."
   end
   def font_not_found_error(font_not_found)
-    ["TDD Ace Bitmap Fonts -- Troubleshooting",
-    "=======================================",
-    "• Cannot find font face \"#{TDD::ABF::SETTINGS::DEFAULT_FONT}\" in font folder \"#{TDD::ABF::SETTINGS::FOLDER}\"; #{font_there_question(font_not_found)}",
-    "• Please verify that the font face name \"#{TDD::ABF::SETTINGS::DEFAULT_FONT}\" is correct.",
-    debug_mode_hint].join("\n")
+    error([
+      "• Cannot find font face \"#{TDD::ABF::SETTINGS::DEFAULT_FONT}\" in font folder \"#{TDD::ABF::SETTINGS::FOLDER}\"; #{font_there_question(font_not_found)}",
+      "• Please verify that the font face name \"#{TDD::ABF::SETTINGS::DEFAULT_FONT}\" is correct.",
+      debug_mode_hint
+    ])
   end
   def font_there_question(font_name)
     matches = lazy_match_font(font_name)
@@ -31,6 +31,13 @@ module USER_ASSISTANCE
   end
   def lazy_match_font(font_name)
     TDD::ABF::Font_Database.fonts.values.select{|f| (f.name.include?(font_name) || font_name.include?(f.name))}.map{|f| f.name}
+  end
+  def error_header
+    ["TDD Ace Bitmap Fonts -- Troubleshooting",
+    "--------------------------------------------------------------"]
+  end
+  def error(array_of_errors)
+    error_header.concat(array_of_errors).join("\n")
   end
 end
 end
