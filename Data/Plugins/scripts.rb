@@ -858,13 +858,13 @@ module SETTINGS
       # =======
       # OPTIONAL: Finetune spacing between two letters, as an array and value
       #           ["a", "b"] => -5, where -5 is the amount you want to adjust
-      #           letter "b" when rendered after letter "a". In this example,
+      #           letter "b" when displayed after letter "a". In this example,
       #           "b" would be drawn -5 pixels adjusted from "a", meaning 5
-      #           pixels closer than other letters.
+      #           pixels closer to "a" than normal.
       # Default:  None
       # ------------------------------------------------------------------------
       :kerning    => {# Do not edit this
-      # Add new ; remember to end each line with a comma (,)
+      # Add new kerning data; remember to end each line with a comma (,)
       # ["a", "b"] => -5,
         ["i", "j"] => -8,
         ["a", "d"] => +5,
@@ -953,18 +953,15 @@ class Parser
   def finalized_char_data
     return @finalized_char_data if @finalized_char_data
     @finalized_char_data = []
-    #char_data.dup.sort_by!{|cd| cd.y + cd.height}.each_slice(characters_per_row) do |row_data|
     baselines.each do |bl|
       row_data = char_data.select{|cd| cd.yr.include?(bl)}
       row_data.sort_by!{|rd| rd.x}.each do |cd|
-        puts "Row data: #{[cd.x, cd.y]}"
         @finalized_char_data << cd
       end
     end
 
     @finalized_char_data.each_with_index.map do |cd, n|
       char = get_character_at(n)
-      puts "getting char at #{n}: #{char}"
       next unless char
       cd.id = char.ord
       cd.x_offset ||= 0
@@ -1156,9 +1153,9 @@ end
 
 # Load all font files
 Dir.glob("#{TDD::ABF::SETTINGS::FOLDER}/*.bft.{jpg,png,bmp}") do |file|
-  puts "> Reading bft file: \"#{file}\" | Please wait..." if TDD::ABF::SETTINGS::DEBUG_MODE
+  puts "> Reading bft file \"#{file}\" | Please wait..." if TDD::ABF::SETTINGS::DEBUG_MODE
   font = TDD::ABF::Font_Database.load_font(file, TDD::ABF::Image_Font_Parser::Parser)
-  puts ">> Font loaded as: \"#{font.name}\"" if TDD::ABF::SETTINGS::DEBUG_MODE
+  puts ">> Font loaded as \"#{font.name}\"" if TDD::ABF::SETTINGS::DEBUG_MODE
 end
 # Control settings
 if TDD::ABF::SETTINGS::DEFAULT_FONT && !TDD::ABF::Font_Database.has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)

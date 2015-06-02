@@ -55,13 +55,13 @@ module SETTINGS
       # =======
       # OPTIONAL: Finetune spacing between two letters, as an array and value
       #           ["a", "b"] => -5, where -5 is the amount you want to adjust
-      #           letter "b" when rendered after letter "a". In this example,
+      #           letter "b" when displayed after letter "a". In this example,
       #           "b" would be drawn -5 pixels adjusted from "a", meaning 5
-      #           pixels closer than other letters.
+      #           pixels closer to "a" than normal.
       # Default:  None
       # ------------------------------------------------------------------------
       :kerning    => {# Do not edit this
-      # Add new ; remember to end each line with a comma (,)
+      # Add new kerning data; remember to end each line with a comma (,)
       # ["a", "b"] => -5,
         ["i", "j"] => -8,
         ["a", "d"] => +5,
