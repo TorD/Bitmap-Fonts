@@ -806,9 +806,6 @@ module ABF
 module Image_Font_Parser
 module SETTINGS
   FONT_CONFIGS = {# Don't edit this
-    "bmf_example" => {
-      :per_row => 7,
-    },
     "asd" => {
       # ------------------------------------------------------------------------
       # Size
@@ -891,9 +888,7 @@ class Parser
 
   def initialize(font_image)
     @font_image = font_image
-    if TDD::ABF::SETTINGS::DEBUG_MODE
-      finalized_char_data.each{|cd| puts "Character #{cd.id.chr} found: x:#{cd.x}, y:#{cd.y}, x_offset:#{cd.x_offset}, y_offset:#{cd.y_offset}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
-    end
+    #finalized_char_data.each{|cd| puts "Character #{cd.id.chr} found: x:#{cd.x}, y:#{cd.y}, x_offset:#{cd.x_offset}, y_offset:#{cd.y_offset}, width:#{cd.width}, height: #{cd.height}, space: #{cd.x_advance}"}
   end
 
   def filename
@@ -958,14 +953,18 @@ class Parser
   def finalized_char_data
     return @finalized_char_data if @finalized_char_data
     @finalized_char_data = []
-    char_data.dup.sort_by!{|cd| cd.y + cd.height}.each_slice(characters_per_row) do |row_data|
-      row_data.sort_by!{|rd| rd.x}.each do |rd|
-        @finalized_char_data << rd
+    #char_data.dup.sort_by!{|cd| cd.y + cd.height}.each_slice(characters_per_row) do |row_data|
+    baselines.each do |bl|
+      row_data = char_data.select{|cd| cd.yr.include?(bl)}
+      row_data.sort_by!{|rd| rd.x}.each do |cd|
+        puts "Row data: #{[cd.x, cd.y]}"
+        @finalized_char_data << cd
       end
     end
 
     @finalized_char_data.each_with_index.map do |cd, n|
       char = get_character_at(n)
+      puts "getting char at #{n}: #{char}"
       next unless char
       cd.id = char.ord
       cd.x_offset ||= 0
@@ -1107,7 +1106,7 @@ class Parser
   end
 
   def character_map
-    default_characer_map
+    settings[:character_map] || default_characer_map
   end
 
   def characters_per_row
@@ -1124,16 +1123,21 @@ class Parser
 
   def get_character_at(index)
     if character_map.first.is_a? Array
-      row_data = character_map[index / characters_per_row]
-      return nil unless row_data
-      return row_data[index % characters_per_row]
+      total = 0
+      character_map.map do |row|
+        total += row.size
+        row[index - total] if total > index
+      end.compact.first
+      #row_data = character_map[index / characters_per_row]
+      #return nil unless row_data
+      #return row_data[index % characters_per_row]
     else
       character_map[index]
     end
   end
 
   def default_characer_map
-    %w[a b c d e f g h i j k l m n o p q r s t u v w x y z]
+    %w[A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z]
   end
 end
 end

@@ -3,9 +3,6 @@ module ABF
 module Image_Font_Parser
 module SETTINGS
   FONT_CONFIGS = {# Don't edit this
-    "bmf_example" => {
-      :per_row => 7,
-    },
     "asd" => {
       # ------------------------------------------------------------------------
       # Size
