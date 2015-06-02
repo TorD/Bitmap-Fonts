@@ -11,7 +11,7 @@ plugins = {
       },
       "Image Font Parser" => {
         order: ["Settings", :rest, "load"]
-      }
+      },
     },
     "Control Settings" => {}
   }
