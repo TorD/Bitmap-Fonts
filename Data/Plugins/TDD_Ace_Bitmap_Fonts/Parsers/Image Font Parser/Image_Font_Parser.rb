@@ -24,7 +24,7 @@ class Parser
   end
 
   def font_name
-    File.basename(font_image.gsub(".bft", ""), ".*")
+    File.basename(font_image.gsub(".tbf", ""), ".*")
   end
 
   def bitmap

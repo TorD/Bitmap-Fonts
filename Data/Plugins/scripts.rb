@@ -130,7 +130,7 @@ module SETTINGS
   #
   # DEFAULT: false    (OFF)
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
-  DEFAULT_FONT = "bmf_examples"
+  DEFAULT_FONT = "bmfexaples"
 
   #-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-
   # - Center Vertical -
@@ -998,7 +998,7 @@ class Parser
   end
 
   def font_name
-    File.basename(font_image.gsub(".bft", ""), ".*")
+    File.basename(font_image.gsub(".tbf", ""), ".*")
   end
 
   def bitmap
@@ -1288,7 +1288,7 @@ module USER_ASSISTANCE
     end
   end
   def lazy_match_font(font_name)
-    TDD::ABF::Font_Database.fonts.values.select{|f| (f.name.include?(font_name) || font_name.include?(f.name))}.map{|f| f.name}
+    TDD::ABF::Font_Database.fonts.values.select{|f| (f.name.scan(/.{3}/).any?{|s|font_name.include?(s)} || font_name.include?(f.name))}.map{|f| f.name}
   end
   def error_header
     ["TDD Ace Bitmap Fonts -- Troubleshooting",
