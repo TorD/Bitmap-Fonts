@@ -7,7 +7,6 @@ module USER_ASSISTANCE
   end
   def check_default_font
     if TDD::ABF::SETTINGS::DEFAULT_FONT && !TDD::ABF::Font_Database.has_font?(TDD::ABF::SETTINGS::DEFAULT_FONT)
-      #raise "TDD Ace Bitmap Fonts: Cannot find font face #{TDD::ABF::SETTINGS::DEFAULT_FONT} in folder #{TDD::ABF::SETTINGS::FOLDER}; are you sure it's there? \nBe sure to verify the font face name."
       raise font_not_found_error(TDD::ABF::SETTINGS::DEFAULT_FONT)
     end
   end
